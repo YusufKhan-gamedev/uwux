@@ -47,6 +47,12 @@ sources:
     patch-path-strip: 1
     version: '12.rolling'
 
+  - name: doomgeneric
+    subdir: bundled
+    git: 'https://github.com/ozkl/doomgeneric.git'
+    branch: 'master'
+    commit: '2d9b24f07c78c36becf41d89db30fa99863463e5'
+
   # - name: python
   #   subdir: 'bundled'
   #   patch-path-strip: 1
@@ -415,13 +421,24 @@ packages:
   #       environ:
   #         DESTDIR: '@THIS_COLLECT_DIR@'
 
+  - name: doomgeneric
+    from_source: doomgeneric
+    tools_required:
+      - host-gcc
+    pkgs_required:
+      - mlibc
+    build:
+      - args: ['make', '-C', '@THIS_SOURCE_DIR@/doomgeneric', '-f', 'Makefile.aero', '-j@PARALLELISM@']
+      - args: ['mkdir', '-p', '@THIS_COLLECT_DIR@/usr/bin']
+      - args: ['cp', '@THIS_SOURCE_DIR@/doomgeneric/doomgeneric', '@THIS_COLLECT_DIR@/usr/bin/doomgeneric']
+
 tasks:
   - name: sysroot
     pkgs_required:
       - binutils
       - coreutils
       - nyancat
-      - gcc
+      - doomgeneric
       - tcc
     args:
       - '@SOURCE_ROOT@/make-iso.sh'

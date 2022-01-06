@@ -47,7 +47,11 @@ Signed-off-by: Andy-Python-Programmer <andypythonappdeveloper@gmail.com>
  sysdeps/aero/include/mlibc/thread-entry.hpp |  10 +
  sysdeps/aero/meson.build                    |  60 +++++
  sysdeps/dripos/generic/generic.cpp          |   3 +
+<<<<<<< Updated upstream
  42 files changed, 858 insertions(+), 10 deletions(-)
+=======
+ 42 files changed, 855 insertions(+), 10 deletions(-)
+>>>>>>> Stashed changes
  create mode 100644 abis/aero/auxv.h
  create mode 100644 sysdeps/aero/crt-x86_64/crt0.S
  create mode 100644 sysdeps/aero/generic/aero.cc
