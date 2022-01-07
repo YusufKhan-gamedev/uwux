@@ -22,18 +22,7 @@ use aero_syscall::*;
 const MAGENTA_FG: &str = "\x1b[1;35m";
 const RESET: &str = "\x1b[0m";
 const UWUFETCH_LOGO: &str = r#"
-    ,---,
-   '  .' \
-  /  ;    '.
- :  :       \
- :  |   /\   \
- |  :  ' ;.   :
- |  |  ;/  \   \
- '  :  | \  \ ,'
- |  |  '  '--'
- |  :  :
- |  | ,'
- `--''
+*insert uwu-chan here*
 "#;
 
 macro_rules! error {
