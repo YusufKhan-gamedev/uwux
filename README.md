@@ -38,7 +38,7 @@ Uwux. If you are using windows, its highly recommended to use UWUWSL 2.
 ## Dependencies
 
 Before building Uwux, you need the following things installed:
-- `rustc` should be the **latest nightly**
+- `rustc(rustup on arch based distros)` should be the **latest nightly**
 - `qemu`
 - `nasm`
 - `g++` 5.1 or later
