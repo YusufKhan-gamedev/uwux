@@ -1,10 +1,7 @@
-<p align="center">
-    <img src="./misc/aero-logo.png">
-</p>
 
-# Aero
+# Uwux
 
-**Aero** is a new modern, experimental, unix-like operating system written in Rust. 
+**Uwux** is a new modern, experimental, unix-like operating system written in Rust. 
 Aero follows the monolithic kernel design and it is inspired by the Linux Kernel and 
 the Zircon Kernel. Aero supports *modern* PC features such as Long Mode, 5-level paging, 
 and SMP (multicore), to name a few.
@@ -33,8 +30,8 @@ No, Aero runs its own kernel that does *not* originate from Linux and does not s
 
 # How to Build and Run Aero
 
-Please make sure you have a **unix-like** host system before building 
-Aero. If you are using windows, its highly recommended to use WSL 2.
+Please make sure you have a **uwux-like** host system before building 
+Aero. If you are using windows, its highly recommended to use UWUWSL 2.
 
 ## Dependencies
 
@@ -56,19 +53,19 @@ The following are *not* requirements but are *recommendations*:
 - \>= 2 cores
 - Internet access
 
-Beefier machines will lead to much faster builds!
+Beefier machines will lead to much faster builds especially with all the bloat we pack(or if your in the future the bloat we used to back(uwu)!
 
 ## Getting the source code
 
 The very first step to work on Aero is to clone the repository:
 ```shell
-$ git clone https://github.com/Andy-Python-Programmer/aero
+$ git clone https://github.com/YusufKhan-gamedev/uwux
 $ cd aero
 ```
 
-## Building Aero
+## Building Uwux
 
-Aero uses a custom build system, that wraps `cargo` and takes care of building the kernel and
+Uwux uses a custom build system, that wraps `cargo` and takes care of building the kernel and
 userland for you. It also builds the initramfs and disk image for you.
 
 The main command we will focus on is `./aero.py`. The source code can be found in the
@@ -117,22 +114,22 @@ will not have any effect when you are simply checking or documenting the build.
 The built disk image is stored in the `build` directory under the name `aero.iso`. Both the
 disk root and initramfs root are preserved in case you want to inspect them manually.
 
-## Running Aero in an emulator
+## Running Uwux in an emulator
 
 If you haven't used the `--no-run` option and you aren't using the `--check` or `--document` build
 mode, the build system will run Aero in the emulator for you.
 
 ## Nightly Images
 
-Want to give Aero a shot, without building it! You can go to the [latest job](https://github.com/Andy-Python-Programmer/aero/actions/workflows/build.yml?query=is%3Asuccess+branch%3Amaster) and download the latest nightly image (`aero.iso`), under artifacts.
+Want to give Uwux a shot, without building it fuck that!
 
 # Contributing
 
-Contributions are absolutely, positively welcome and encouraged! Check out [CONTRIBUTING.md](CONTRIBUTING.md) for the contributing guidelines for aero.
+Contributions are absolutely, positively welcome and encouraged! Check out [CONTRIBUTING.md](CONTRIBUTING.md) for the contributing guidelines for Uwux.
 
 # License
 
-Aero is free software: you can redistribute it and/or modify
+Uwux is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version. See the [LICENSE](LICENSE) file for license rights and limitations.
