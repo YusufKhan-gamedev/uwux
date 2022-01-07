@@ -2,16 +2,18 @@
 # Uwux
 
 **Uwux** is a new modern, experimental, unix-like operating system written in Rust. 
-Aero follows the monolithic kernel design and it is inspired by the Linux Kernel and 
-the Zircon Kernel. Aero supports *modern* PC features such as Long Mode, 5-level paging, 
+Uwux follows the monolithic kernel design and it is inspired by the Linux Kernel and 
+the Zircon Kernel. Uwux supports "modern" PC features such as Long Mode, 5-level paging, 
 and SMP (multicore), to name a few.
 
+Now for the brag so my future employers will have a better chance of hiring me.
+
 ![workflow](https://github.com/Andy-Python-Programmer/aero/actions/workflows/build.yml/badge.svg)
-[![lines_of_code](https://tokei.rs/b1/github/Andy-Python-Programmer/aero)](https://github.com/Andy-Python-Programmer/aero)
+[![lines_of_code](https://tokei.rs/b1/github/YusufKhan-gamedev/uwux)](https://github.com/YusufKhan-gamedev/uwux)
 [![discord](https://img.shields.io/discord/828564770063122432)](https://discord.gg/8gwhTTZwt8)
 
 **Is this a Linux distribution?**
-No, Aero runs its own kernel that does *not* originate from Linux and does not share any source code or binaries with the Linux kernel.
+No, Uwux runs its own kernel that does *not* originate from Linux and does not share any source code or binaries with the Linux kernel.
 
 **Official Discord Server**: <https://discord.gg/8gwhTTZwt8>
 
@@ -28,14 +30,14 @@ No, Aero runs its own kernel that does *not* originate from Linux and does not s
 - Symmetric Multiprocessing (SMP)
 - On-demand paging
 
-# How to Build and Run Aero
+# How to Build and Run Uwux
 
 Please make sure you have a **uwux-like** host system before building 
-Aero. If you are using windows, its highly recommended to use UWUWSL 2.
+Uwux. If you are using windows, its highly recommended to use UWUWSL 2.
 
 ## Dependencies
 
-Before building Aero, you need the following things installed:
+Before building Uwux, you need the following things installed:
 - `rustc` should be the **latest nightly**
 - `qemu`
 - `nasm`
@@ -57,10 +59,10 @@ Beefier machines will lead to much faster builds especially with all the bloat w
 
 ## Getting the source code
 
-The very first step to work on Aero is to clone the repository:
+The very first step to work on Uwux is to clone the repository:
 ```shell
 $ git clone https://github.com/YusufKhan-gamedev/uwux
-$ cd aero
+$ cd uwux
 ```
 
 ## Building Uwux
@@ -97,13 +99,13 @@ will not have any effect when you are simply checking or documenting the build.
 
 - `--debug` toggles off the release build flag when calling cargo.
 
-  **Summary**: If the `--debug` flag is not passed then it will build Aero in release mode
+  **Summary**: If the `--debug` flag is not passed then it will build Uwux in release mode
                and debug symbols will be avaliable. On the other hand, if the debug flag is passed
                then it will be built in debug mode and debug symbols will be still avaliable. By default
-               Aero is built in release mode (with debug symbols) since it generates faster and smaller
+               Uwux is built in release mode (with debug symbols) since it generates faster and smaller
                binaries which are easier to test.
 - `--no-run` prevents from running the built disk image in the emulator
-- `--bios` lets you choose the firmware the emulator will use when booting Aero,
+- `--bios` lets you choose the firmware the emulator will use when booting Uwux,
   currently supported values are: `legacy` and `uefi`
 - `--features` accepts a single comma-separated list of kernel crate features, please
   keep in mind that there cannot be spaces in between the values
