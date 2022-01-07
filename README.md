@@ -46,6 +46,7 @@ Before building Uwux, you need the following things installed:
 - `parted`
 - `meson`
 - `python3`
+- `cpio`
 
 ## Hardware
 
