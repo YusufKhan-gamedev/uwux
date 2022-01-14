@@ -1,0 +1,13 @@
+[workspace]
+members = ["aero_kernel", "aero_syscall", "aero_test"]
+
+[profile.release]
+debug = true
+
+[[package]]
+authors = ["Anhad Singh <andypythonappdeveloper@gmail.com>"]
+edition = "2021"
+name = "aero_kernel"
+description = "The kernel for the aero operating system, this may be a downstream version."
+liscense = "GPL-3.0"
+version = "0.1.0"
