@@ -67,18 +67,6 @@ fn repl(history: &mut Vec<String>) -> Result<(), AeroSyscallError> {
             "cd" => {
                 sys_chdir(args.next().unwrap_or(".."))?;
             }
-            "mkdir" => match args.next() {
-                Some(path) => {
-                    sys_mkdir(path)?;
-                }
-                None => error!("mkdir: missing operand"),
-            },
-            "rmdir" => match args.next() {
-                Some(path) => {
-                    sys_rmdir(path)?;
-                }
-                None => error!("rmdir: missing operand"),
-            },
             "exit" => match args.next() {
                 Some(status) => match status.parse::<usize>() {
                     Ok(exit_code) => sys_exit(exit_code),
@@ -86,7 +74,6 @@ fn repl(history: &mut Vec<String>) -> Result<(), AeroSyscallError> {
                 },
                 None => sys_exit(0),
             },
-            "cat" => cat_file(args.next())?,
             "clear" => print!("{esc}[2J{esc}[1;1H", esc = 27 as char),
             "dmsg" => print_kernel_log()?,
             "uwufetch" => uwufetch()?,
@@ -153,39 +140,12 @@ fn repl(history: &mut Vec<String>) -> Result<(), AeroSyscallError> {
             "uptime" => {
                 print!("{}", get_uptime()?);
             }
-
-            "sleep" => {
-                let duration = args.next().unwrap_or("0").parse::<usize>().unwrap_or(0);
-                let timespec = TimeSpec {
-                    tv_sec: duration as isize,
-                    tv_nsec: 0,
-                };
-
-                sys_sleep(&timespec)?;
-            }
-
-            "gcc" => {
-                let child = sys_fork()?;
-
-                if child == 0 {
-                    let args = args.collect::<Vec<_>>();
-                    let mut argv = Vec::new();
-
-                    argv.push("/bin/x86_64-aero-gcc");
-                    argv.extend(args);
-
-                    let argv = argv.as_slice();
-
-                    if sys_exec("/bin/x86_64-aero-gcc", argv, &["TERM=linux"]).is_err() {
-                        println!("{}: command not found", cmd);
-                        sys_exit(1);
-                    }
-                } else {
-                    // Wait for the child
-                    let mut status = 0;
-                    sys_waitpid(child, &mut status, 0)?;
+            "rmdir" => match args.next() {
+                Some(path) => {
+                    sys_rmdir(path)?;
                 }
-            }
+                None => error!("rmdir: missing operand"),
+            },
 
             _ => {
                 let child = sys_fork()?;
@@ -199,7 +159,7 @@ fn repl(history: &mut Vec<String>) -> Result<(), AeroSyscallError> {
 
                     let argv = argv.as_slice();
 
-                    match sys_exec(cmd, argv, &["TERM=linux"]) {
+                    match sys_exec(&["/bin/", cmd].join(""), argv, &[]) { {
                         Ok(_) => core::unreachable!(),
                         Err(AeroSyscallError::EISDIR) => error!("{}: is a directory", cmd),
                         Err(AeroSyscallError::ENOENT) => error!("{}: command not found", cmd),
