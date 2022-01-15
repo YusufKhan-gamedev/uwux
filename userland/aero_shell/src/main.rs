@@ -17,12 +17,8 @@
  * along with Aero. If not, see <https://www.gnu.org/licenses/>.
  */
 
-extern crate alloc;
-
-use core::alloc::Layout;
 
 use aero_syscall::*;
-use alloc::alloc::{alloc_zeroed, dealloc};
 
 const MAGENTA_FG: &str = "\x1b[1;35m";
 const RESET: &str = "\x1b[0m";
@@ -159,7 +155,7 @@ fn repl(history: &mut Vec<String>) -> Result<(), AeroSyscallError> {
 
                     let argv = argv.as_slice();
 
-                    match sys_exec(&["/bin/", cmd].join(""), argv, &[]) { {
+                    match sys_exec(cmd, argv, &[]) {
                         Ok(_) => core::unreachable!(),
                         Err(AeroSyscallError::EISDIR) => error!("{}: is a directory", cmd),
                         Err(AeroSyscallError::ENOENT) => error!("{}: command not found", cmd),
