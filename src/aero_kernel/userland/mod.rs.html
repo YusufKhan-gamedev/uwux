@@ -45,6 +45,14 @@
 <span id="42">42</span>
 <span id="43">43</span>
 <span id="44">44</span>
+<span id="45">45</span>
+<span id="46">46</span>
+<span id="47">47</span>
+<span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -81,6 +89,14 @@
     <span class="prelude-val">Ok</span>(())
 }
 
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">run_tests</span>() -&gt; <span class="ident">fs::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">let</span> <span class="ident">utest_path</span> <span class="op">=</span> <span class="ident">Path::new</span>(<span class="string">&quot;/bin/utest&quot;</span>);
+    <span class="kw">let</span> <span class="ident">utest_inode</span> <span class="op">=</span> <span class="ident">fs::lookup_path</span>(<span class="ident">utest_path</span>)<span class="question-mark">?</span>;
+
+    <span class="ident">scheduler::get_scheduler</span>().<span class="ident">exec</span>(<span class="ident">utest_inode</span>, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>);
+    <span class="prelude-val">Ok</span>(())
+}
+
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init_ap</span>() {
     <span class="ident">syscall::init</span>();
 }
@@ -90,5 +106,5 @@
     <span class="ident">syscall::init</span>();
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (ad46af247 2022-01-14)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (ec4bcaac4 2022-01-15)" ></div>
 </body></html>

@@ -658,6 +658,61 @@
 <span id="655">655</span>
 <span id="656">656</span>
 <span id="657">657</span>
+<span id="658">658</span>
+<span id="659">659</span>
+<span id="660">660</span>
+<span id="661">661</span>
+<span id="662">662</span>
+<span id="663">663</span>
+<span id="664">664</span>
+<span id="665">665</span>
+<span id="666">666</span>
+<span id="667">667</span>
+<span id="668">668</span>
+<span id="669">669</span>
+<span id="670">670</span>
+<span id="671">671</span>
+<span id="672">672</span>
+<span id="673">673</span>
+<span id="674">674</span>
+<span id="675">675</span>
+<span id="676">676</span>
+<span id="677">677</span>
+<span id="678">678</span>
+<span id="679">679</span>
+<span id="680">680</span>
+<span id="681">681</span>
+<span id="682">682</span>
+<span id="683">683</span>
+<span id="684">684</span>
+<span id="685">685</span>
+<span id="686">686</span>
+<span id="687">687</span>
+<span id="688">688</span>
+<span id="689">689</span>
+<span id="690">690</span>
+<span id="691">691</span>
+<span id="692">692</span>
+<span id="693">693</span>
+<span id="694">694</span>
+<span id="695">695</span>
+<span id="696">696</span>
+<span id="697">697</span>
+<span id="698">698</span>
+<span id="699">699</span>
+<span id="700">700</span>
+<span id="701">701</span>
+<span id="702">702</span>
+<span id="703">703</span>
+<span id="704">704</span>
+<span id="705">705</span>
+<span id="706">706</span>
+<span id="707">707</span>
+<span id="708">708</span>
+<span id="709">709</span>
+<span id="710">710</span>
+<span id="711">711</span>
+<span id="712">712</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -919,13 +974,68 @@
 <span class="macro">bitflags::bitflags!</span> {
     <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Default</span>)]</span>
     <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">TermiosLFlag</span>: <span class="ident">u32</span> {
-        <span class="kw">const</span> <span class="ident">ECHO</span>   <span class="op">=</span> <span class="number">0000010</span>; <span class="comment">// Enable echo</span>
-        <span class="kw">const</span> <span class="ident">ECHOE</span>  <span class="op">=</span> <span class="number">0000020</span>; <span class="comment">// Echo erase character as error-correcting backspace</span>
-        <span class="kw">const</span> <span class="ident">ECHOK</span>  <span class="op">=</span> <span class="number">0000040</span>; <span class="comment">// Echo kill</span>
-        <span class="kw">const</span> <span class="ident">ECHONL</span> <span class="op">=</span> <span class="number">0000100</span>; <span class="comment">// Echo NL</span>
-        <span class="kw">const</span> <span class="ident">NOFLSH</span> <span class="op">=</span> <span class="number">0000200</span>; <span class="comment">// Disable flush after interrupt or quit</span>
-        <span class="kw">const</span> <span class="ident">TOSTOP</span> <span class="op">=</span> <span class="number">0000400</span>; <span class="comment">// Send SIGTTOU for background output</span>
-        <span class="kw">const</span> <span class="ident">ICANON</span> <span class="op">=</span> <span class="number">0000002</span>; <span class="comment">// Canonical input (erase and kill processing)</span>
+        <span class="kw">const</span> <span class="ident">ECHO</span>   <span class="op">=</span>  <span class="number">0x0001</span>;
+        <span class="kw">const</span> <span class="ident">ECHOE</span>  <span class="op">=</span>  <span class="number">0x0002</span>;
+        <span class="kw">const</span> <span class="ident">ECHOK</span>  <span class="op">=</span>  <span class="number">0x0004</span>;
+        <span class="kw">const</span> <span class="ident">ECHONL</span> <span class="op">=</span>  <span class="number">0x0008</span>;
+        <span class="kw">const</span> <span class="ident">ICANON</span> <span class="op">=</span>  <span class="number">0x0010</span>;
+        <span class="kw">const</span> <span class="ident">IEXTEN</span> <span class="op">=</span>  <span class="number">0x0020</span>;
+        <span class="kw">const</span> <span class="ident">ISIG</span>   <span class="op">=</span>  <span class="number">0x0040</span>;
+        <span class="kw">const</span> <span class="ident">NOFLSH</span> <span class="op">=</span>  <span class="number">0x0080</span>;
+        <span class="kw">const</span> <span class="ident">TOSTOP</span> <span class="op">=</span>  <span class="number">0x0100</span>;
+        <span class="kw">const</span> <span class="ident">ECHOPRT</span><span class="op">=</span>  <span class="number">0x0200</span>;
+    }
+}
+
+<span class="macro">bitflags::bitflags!</span> {
+    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Default</span>)]</span>
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">TermiosCFlag</span>: <span class="ident">u32</span> {
+        <span class="kw">const</span> <span class="ident">CSIZE</span>  <span class="op">=</span>  <span class="number">0x0003</span>;
+        <span class="kw">const</span> <span class="ident">CS5</span>    <span class="op">=</span>  <span class="number">0x0000</span>;
+        <span class="kw">const</span> <span class="ident">CS6</span>    <span class="op">=</span>  <span class="number">0x0001</span>;
+        <span class="kw">const</span> <span class="ident">CS7</span>    <span class="op">=</span>  <span class="number">0x0002</span>;
+        <span class="kw">const</span> <span class="ident">CS8</span>    <span class="op">=</span>  <span class="number">0x0003</span>;
+        <span class="kw">const</span> <span class="ident">CSTOPB</span> <span class="op">=</span>  <span class="number">0x0004</span>;
+        <span class="kw">const</span> <span class="ident">CREAD</span>  <span class="op">=</span>  <span class="number">0x0008</span>;
+        <span class="kw">const</span> <span class="ident">PARENB</span> <span class="op">=</span>  <span class="number">0x0010</span>;
+        <span class="kw">const</span> <span class="ident">PARODD</span> <span class="op">=</span>  <span class="number">0x0020</span>;
+        <span class="kw">const</span> <span class="ident">HUPCL</span>  <span class="op">=</span>  <span class="number">0x0040</span>;
+        <span class="kw">const</span> <span class="ident">CLOCAL</span> <span class="op">=</span>  <span class="number">0x0080</span>;
+    }
+}
+
+<span class="macro">bitflags::bitflags!</span> {
+    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Default</span>)]</span>
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">TermiosOFlag</span>: <span class="ident">u32</span> {
+        <span class="kw">const</span> <span class="ident">OPOST</span>  <span class="op">=</span>  <span class="number">0x0001</span>;
+        <span class="kw">const</span> <span class="ident">ONLCR</span>  <span class="op">=</span>  <span class="number">0x0002</span>;
+        <span class="kw">const</span> <span class="ident">OCRNL</span>  <span class="op">=</span>  <span class="number">0x0004</span>;
+        <span class="kw">const</span> <span class="ident">ONOCR</span>  <span class="op">=</span>  <span class="number">0x0008</span>;
+        <span class="kw">const</span> <span class="ident">ONLRET</span> <span class="op">=</span>  <span class="number">0x0010</span>;
+        <span class="kw">const</span> <span class="ident">OFDEL</span>  <span class="op">=</span>  <span class="number">0x0020</span>;
+        <span class="kw">const</span> <span class="ident">OFILL</span>  <span class="op">=</span>  <span class="number">0x0040</span>;
+        <span class="kw">const</span> <span class="ident">NLDLY</span>  <span class="op">=</span>  <span class="number">0x0080</span>;
+        <span class="kw">const</span> <span class="ident">NL0</span>    <span class="op">=</span>  <span class="number">0x0000</span>;
+        <span class="kw">const</span> <span class="ident">NL1</span>    <span class="op">=</span>  <span class="number">0x0080</span>;
+        <span class="kw">const</span> <span class="ident">CRDLY</span>  <span class="op">=</span>  <span class="number">0x0300</span>;
+        <span class="kw">const</span> <span class="ident">CR0</span>    <span class="op">=</span>  <span class="number">0x0000</span>;
+        <span class="kw">const</span> <span class="ident">CR1</span>    <span class="op">=</span>  <span class="number">0x0100</span>;
+        <span class="kw">const</span> <span class="ident">CR2</span>    <span class="op">=</span>  <span class="number">0x0200</span>;
+        <span class="kw">const</span> <span class="ident">CR3</span>    <span class="op">=</span>  <span class="number">0x0300</span>;
+        <span class="kw">const</span> <span class="ident">TABDLY</span> <span class="op">=</span>  <span class="number">0x0C00</span>;
+        <span class="kw">const</span> <span class="ident">TAB0</span>   <span class="op">=</span>  <span class="number">0x0000</span>;
+        <span class="kw">const</span> <span class="ident">TAB1</span>   <span class="op">=</span>  <span class="number">0x0400</span>;
+        <span class="kw">const</span> <span class="ident">TAB2</span>   <span class="op">=</span>  <span class="number">0x0800</span>;
+        <span class="kw">const</span> <span class="ident">TAB3</span>   <span class="op">=</span>  <span class="number">0x0C00</span>;
+        <span class="kw">const</span> <span class="ident">BSDLY</span>  <span class="op">=</span>  <span class="number">0x1000</span>;
+        <span class="kw">const</span> <span class="ident">BS0</span>    <span class="op">=</span>  <span class="number">0x0000</span>;
+        <span class="kw">const</span> <span class="ident">BS1</span>    <span class="op">=</span>  <span class="number">0x1000</span>;
+        <span class="kw">const</span> <span class="ident">VTDLY</span>  <span class="op">=</span>  <span class="number">0x2000</span>;
+        <span class="kw">const</span> <span class="ident">VT0</span>    <span class="op">=</span>  <span class="number">0x0000</span>;
+        <span class="kw">const</span> <span class="ident">VT1</span>    <span class="op">=</span>  <span class="number">0x2000</span>;
+        <span class="kw">const</span> <span class="ident">FFDLY</span>  <span class="op">=</span>  <span class="number">0x4000</span>;
+        <span class="kw">const</span> <span class="ident">FF0</span>    <span class="op">=</span>  <span class="number">0x0000</span>;
+        <span class="kw">const</span> <span class="ident">FF1</span>    <span class="op">=</span>  <span class="number">0x4000</span>;
     }
 }
 
@@ -933,8 +1043,8 @@
 <span class="attribute">#[<span class="ident">repr</span>(<span class="ident">C</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Termios</span> {
     <span class="kw">pub</span> <span class="ident">c_iflag</span>: <span class="ident">u32</span>,
-    <span class="kw">pub</span> <span class="ident">c_oflag</span>: <span class="ident">u32</span>,
-    <span class="kw">pub</span> <span class="ident">c_cflag</span>: <span class="ident">u32</span>,
+    <span class="kw">pub</span> <span class="ident">c_oflag</span>: <span class="ident">TermiosOFlag</span>,
+    <span class="kw">pub</span> <span class="ident">c_cflag</span>: <span class="ident">TermiosCFlag</span>,
     <span class="kw">pub</span> <span class="ident">c_lflag</span>: <span class="ident">TermiosLFlag</span>,
     <span class="kw">pub</span> <span class="ident">c_line</span>: <span class="ident">u8</span>,
     <span class="kw">pub</span> <span class="ident">c_cc</span>: [<span class="ident">u8</span>; <span class="number">32</span>],
@@ -1316,5 +1426,5 @@
     <span class="ident">isize_as_syscall_result</span>(<span class="ident">value</span> <span class="kw">as</span> <span class="kw">_</span>)
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_syscall" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (ad46af247 2022-01-14)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_syscall" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (ec4bcaac4 2022-01-15)" ></div>
 </body></html>

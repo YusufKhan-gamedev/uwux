@@ -270,6 +270,12 @@
 <span id="267">267</span>
 <span id="268">268</span>
 <span id="269">269</span>
+<span id="270">270</span>
+<span id="271">271</span>
+<span id="272">272</span>
+<span id="273">273</span>
+<span id="274">274</span>
+<span id="275">275</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -307,13 +313,19 @@
 }
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">exit</span>(<span class="ident">status</span>: <span class="ident">usize</span>) -&gt; <span class="op">!</span> {
-    <span class="macro">log::trace!</span>(
-        <span class="string">&quot;exiting the process (pid={pid}) with status: {status}&quot;</span>,
-        <span class="ident">pid</span> <span class="op">=</span> <span class="ident">scheduler::get_scheduler</span>().<span class="ident">current_task</span>().<span class="ident">pid</span>().<span class="ident">as_usize</span>(),
-        <span class="ident">status</span> <span class="op">=</span> <span class="ident">status</span>
-    );
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">test</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;ci&quot;</span>))]</span>
+    <span class="ident"><span class="kw">crate</span>::emu::exit_qemu</span>(<span class="ident"><span class="kw">crate</span>::emu::ExitStatus::Success</span>);
 
-    <span class="ident">scheduler::get_scheduler</span>().<span class="ident">inner</span>.<span class="ident">exit</span>(<span class="ident">status</span> <span class="kw">as</span> <span class="ident">isize</span>);
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;ci&quot;</span>))]</span>
+    {
+        <span class="macro">log::trace!</span>(
+            <span class="string">&quot;exiting the process (pid={pid}) with status: {status}&quot;</span>,
+            <span class="ident">pid</span> <span class="op">=</span> <span class="ident">scheduler::get_scheduler</span>().<span class="ident">current_task</span>().<span class="ident">pid</span>().<span class="ident">as_usize</span>(),
+            <span class="ident">status</span> <span class="op">=</span> <span class="ident">status</span>
+        );
+
+        <span class="ident">scheduler::get_scheduler</span>().<span class="ident">inner</span>.<span class="ident">exit</span>(<span class="ident">status</span> <span class="kw">as</span> <span class="ident">isize</span>);
+    }
 }
 
 <span class="kw">const</span> <span class="ident">ARCH_SET_GS</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">0x1001</span>;
@@ -540,5 +552,5 @@
     <span class="kw">loop</span> {}
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (ad46af247 2022-01-14)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (ec4bcaac4 2022-01-15)" ></div>
 </body></html>
