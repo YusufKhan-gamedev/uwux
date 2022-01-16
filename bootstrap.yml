@@ -350,7 +350,6 @@ packages:
         - '@THIS_COLLECT_DIR@/usr'
         - '-j@PARALLELISM@'
 
-<<<<<<< HEAD
   - name: sd
     source:
       subdir: bundled
@@ -379,8 +378,6 @@ packages:
         - '@THIS_COLLECT_DIR@/usr'
         - '-j@PARALLELISM@'
 
-=======
->>>>>>> 0e5d2ae8a (ports: initial ripgrep wip port and host-cargo)
   - name: mlibc-headers
     from_source: mlibc
     implict_package: true
