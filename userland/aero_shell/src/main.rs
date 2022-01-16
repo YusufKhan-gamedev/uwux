@@ -155,7 +155,7 @@ fn repl(history: &mut Vec<String>) -> Result<(), AeroSyscallError> {
 
                     let argv = argv.as_slice();
 
-                    match sys_exec(cmd, argv, &["TERM=linux"]) {
+                    match sys_exec(&["/bin/", cmd].join(""), argv, &[]) {
                         Ok(_) => core::unreachable!(),
                         Err(AeroSyscallError::EISDIR) => error!("{}: is a directory", cmd),
                         Err(AeroSyscallError::ENOENT) => error!("{}: command not found", cmd),
