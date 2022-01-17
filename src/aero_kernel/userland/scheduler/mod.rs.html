@@ -136,6 +136,8 @@
 <span id="133">133</span>
 <span id="134">134</span>
 <span id="135">135</span>
+<span id="136">136</span>
+<span id="137">137</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -168,6 +170,7 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils::Downcastable</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="self">self</span>::round_robin::RoundRobin</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::signals::SignalResult</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::task</span>::{<span class="ident">Task</span>, <span class="ident">TaskId</span>};
 
 <span class="kw">static</span> <span class="ident">SCHEDULER</span>: <span class="ident">Once</span><span class="op">&lt;</span><span class="ident">Scheduler</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Once::new</span>();
@@ -182,9 +185,10 @@
     <span class="kw">fn</span> <span class="ident">current_task</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Task</span><span class="op">&gt;</span>;
 
     <span class="kw">fn</span> <span class="ident">init</span>(<span class="kw-2">&amp;</span><span class="self">self</span>);
-    <span class="kw">fn</span> <span class="ident">await_io</span>(<span class="kw-2">&amp;</span><span class="self">self</span>);
     <span class="kw">fn</span> <span class="ident">wake_up</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">task</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Task</span><span class="op">&gt;</span>);
-    <span class="kw">fn</span> <span class="ident">sleep</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">duration</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>);
+
+    <span class="kw">fn</span> <span class="ident">await_io</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">SignalResult</span><span class="op">&lt;</span>()<span class="op">&gt;</span>;
+    <span class="kw">fn</span> <span class="ident">sleep</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">duration</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>) -&gt; <span class="ident">SignalResult</span><span class="op">&lt;</span>()<span class="op">&gt;</span>;
 
     <span class="doccomment">/// Yields execution to another task.</span>
     <span class="kw">fn</span> <span class="ident">preempt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>);
@@ -272,5 +276,5 @@
     <span class="ident">SCHEDULER</span>.<span class="ident">call_once</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">Scheduler::new</span>()).<span class="ident">inner</span>.<span class="ident">init</span>();
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (ec4bcaac4 2022-01-15)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (bd3cb5256 2022-01-16)" ></div>
 </body></html>

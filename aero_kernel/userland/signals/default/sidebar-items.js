@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Action",""]],"fn":[["action","Get the default action for the provided `signal`."],["handle_default","Runs the default action for the provided `signal`."],["stop",""],["terminate",""],["terminate_thread",""]],"static":[["DEFAULT_ACTIONS","Some of the default actions for the signals."]]});

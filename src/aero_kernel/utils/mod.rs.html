@@ -348,6 +348,17 @@
 <span id="345">345</span>
 <span id="346">346</span>
 <span id="347">347</span>
+<span id="348">348</span>
+<span id="349">349</span>
+<span id="350">350</span>
+<span id="351">351</span>
+<span id="352">352</span>
+<span id="353">353</span>
+<span id="354">354</span>
+<span id="355">355</span>
+<span id="356">356</span>
+<span id="357">357</span>
+<span id="358">358</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -667,6 +678,17 @@
 
         (<span class="kw-2">*</span><span class="self">self</span>.<span class="ident">ptr</span> <span class="kw">as</span> <span class="kw-2">*mut</span> <span class="ident">u8</span>).<span class="ident">copy_from</span>(<span class="ident">bytes</span>.<span class="ident">as_ptr</span>(), <span class="ident">bytes</span>.<span class="ident">len</span>());
     }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_by</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">by</span>: <span class="ident">u64</span>) {
+        <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">ptr</span> <span class="op">+</span><span class="op">=</span> <span class="ident">by</span>;
+    }
+
+    <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">get</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span>, <span class="ident">T</span>: <span class="ident">Sized</span><span class="op">&gt;</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="kw-2">mut</span> <span class="ident">T</span> {
+        <span class="kw">let</span> <span class="ident">x</span> <span class="op">=</span> <span class="kw-2">&amp;mut</span> <span class="kw-2">*</span>(<span class="kw-2">*</span><span class="self">self</span>.<span class="ident">ptr</span> <span class="kw">as</span> <span class="kw-2">*mut</span> <span class="ident">T</span>);
+
+        <span class="self">self</span>.<span class="ident">get_by</span>(<span class="ident">core::mem::size_of</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>() <span class="kw">as</span> <span class="ident">u64</span>);
+        <span class="ident">x</span>
+    }
 }
 
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">CeilDiv</span> {
@@ -696,5 +718,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (ec4bcaac4 2022-01-15)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (bd3cb5256 2022-01-16)" ></div>
 </body></html>

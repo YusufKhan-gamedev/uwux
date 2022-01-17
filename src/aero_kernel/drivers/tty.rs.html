@@ -1069,7 +1069,7 @@
 <span class="kw">impl</span> <span class="ident">INodeInterface</span> <span class="kw">for</span> <span class="ident">Tty</span> {
     <span class="kw">fn</span> <span class="ident">read_at</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">_offset</span>: <span class="ident">usize</span>, <span class="ident">buffer</span>: <span class="kw-2">&amp;mut</span> [<span class="ident">u8</span>]) -&gt; <span class="ident">fs::Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">block_queue</span>
-            .<span class="ident">block_on</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">stdin</span>, <span class="op">|</span><span class="ident">future</span><span class="op">|</span> <span class="ident">future</span>.<span class="ident">is_complete</span>());
+            .<span class="ident">block_on</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">stdin</span>, <span class="op">|</span><span class="ident">future</span><span class="op">|</span> <span class="ident">future</span>.<span class="ident">is_complete</span>())<span class="question-mark">?</span>;
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">stdin</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">stdin</span>.<span class="ident">lock_irq</span>();
 
@@ -1686,5 +1686,5 @@
 
 <span class="macro">crate::module_init!</span>(<span class="ident">init_tty</span>);
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (ec4bcaac4 2022-01-15)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (bd3cb5256 2022-01-16)" ></div>
 </body></html>

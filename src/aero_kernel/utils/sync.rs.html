@@ -203,11 +203,13 @@
 <span id="200">200</span>
 <span id="201">201</span>
 <span id="202">202</span>
+<span id="203">203</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">alloc::sync::Arc</span>;
 <span class="kw">use</span> <span class="ident">alloc::vec::Vec</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::arch::interrupts</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::userland::scheduler</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::userland::signals::SignalResult</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::userland::task::Task</span>;
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BlockQueue</span> {
@@ -229,12 +231,12 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">mutex</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;future</span> <span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
         <span class="kw-2">mut</span> <span class="ident">future</span>: <span class="ident">F</span>,
-    ) -&gt; <span class="ident">MutexGuard</span><span class="op">&lt;</span><span class="lifetime">&#39;future</span>, <span class="ident">T</span><span class="op">&gt;</span> {
+    ) -&gt; <span class="ident">SignalResult</span><span class="op">&lt;</span><span class="ident">MutexGuard</span><span class="op">&lt;</span><span class="lifetime">&#39;future</span>, <span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">lock</span> <span class="op">=</span> <span class="ident">mutex</span>.<span class="ident">lock_irq</span>();
 
         <span class="comment">// Check if the future was already completed.</span>
         <span class="kw">if</span> <span class="ident">future</span>(<span class="kw-2">&amp;mut</span> <span class="ident">lock</span>) {
-            <span class="kw">return</span> <span class="ident">lock</span>;
+            <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">lock</span>);
         }
 
         <span class="kw">let</span> <span class="ident">scheduler</span> <span class="op">=</span> <span class="ident">scheduler::get_scheduler</span>();
@@ -245,14 +247,14 @@
         <span class="comment">// Wait until the future is completed.</span>
         <span class="kw">while</span> <span class="op">!</span><span class="ident">future</span>(<span class="kw-2">&amp;mut</span> <span class="ident">lock</span>) {
             <span class="ident">core::mem::drop</span>(<span class="ident">lock</span>); <span class="comment">// Drop the IRQ lock and await for IO to complete.</span>
-            <span class="ident">scheduler</span>.<span class="ident">inner</span>.<span class="ident">await_io</span>();
+            <span class="ident">scheduler</span>.<span class="ident">inner</span>.<span class="ident">await_io</span>()<span class="question-mark">?</span>;
 
             <span class="comment">// Re-acquire the lock.</span>
             <span class="ident">lock</span> <span class="op">=</span> <span class="ident">mutex</span>.<span class="ident">lock_irq</span>();
         }
 
         <span class="self">self</span>.<span class="ident">remove_task</span>(<span class="ident">task</span>);
-        <span class="ident">lock</span>
+        <span class="prelude-val">Ok</span>(<span class="ident">lock</span>)
     }
 
     <span class="doccomment">/// Inner helper function which removes a task from the block queue.</span>
@@ -406,5 +408,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (ec4bcaac4 2022-01-15)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (bd3cb5256 2022-01-16)" ></div>
 </body></html>

@@ -262,6 +262,17 @@
 <span id="259">259</span>
 <span id="260">260</span>
 <span id="261">261</span>
+<span id="262">262</span>
+<span id="263">263</span>
+<span id="264">264</span>
+<span id="265">265</span>
+<span id="266">266</span>
+<span id="267">267</span>
+<span id="268">268</span>
+<span id="269">269</span>
+<span id="270">270</span>
+<span id="271">271</span>
+<span id="272">272</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -338,6 +349,7 @@
 <span class="kw">use</span> <span class="ident">raw_cpuid::CpuId</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">time</span>::<span class="kw-2">*</span>;
 
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::arch::signals</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::arch</span>::{<span class="ident">gdt::GdtEntryType</span>, <span class="ident">interrupts</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils</span>::{<span class="ident">io</span>, <span class="ident">StackHelper</span>};
 
@@ -433,6 +445,12 @@
         <span class="kw">_</span> =&gt; <span class="kw">unsafe</span> { <span class="ident">interrupts::enable_interrupts</span>() },
     }
 
+    <span class="kw">if</span> <span class="ident">a</span> <span class="op">==</span> <span class="ident">SYS_SIGRETURN</span> {
+        <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">signals::sigreturn</span>(<span class="ident">sys</span>, <span class="ident">stack</span>);
+        <span class="ident">stack</span>.<span class="ident">rax</span> <span class="op">=</span> <span class="ident">result</span> <span class="kw">as</span> <span class="ident">u64</span>;
+        <span class="kw">return</span>;
+    }
+
     <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">a</span> {
         <span class="ident">SYS_EXIT</span> =&gt; <span class="ident">process::exit</span>(<span class="ident">b</span>),
         <span class="ident">SYS_SHUTDOWN</span> =&gt; <span class="ident">process::shutdown</span>(),
@@ -449,6 +467,7 @@
         <span class="ident">SYS_GETHOSTNAME</span> =&gt; <span class="ident">process::gethostname</span>(<span class="ident">b</span>, <span class="ident">c</span>),
         <span class="ident">SYS_SETHOSTNAME</span> =&gt; <span class="ident">process::sethostname</span>(<span class="ident">b</span>, <span class="ident">c</span>),
         <span class="ident">SYS_INFO</span> =&gt; <span class="ident">process::info</span>(<span class="ident">b</span>),
+        <span class="ident">SYS_SIGACTION</span> =&gt; <span class="ident">process::sigaction</span>(<span class="ident">b</span>, <span class="ident">c</span>, <span class="ident">d</span>, <span class="ident">e</span>),
         <span class="ident">SYS_CLONE</span> =&gt; <span class="ident">process::clone</span>(<span class="ident">b</span>, <span class="ident">c</span>),
 
         <span class="number">0x13A</span> =&gt; {
@@ -487,7 +506,10 @@
         }
     };
 
-    <span class="ident">stack</span>.<span class="ident">rax</span> <span class="op">=</span> <span class="ident">aero_syscall::syscall_result_as_usize</span>(<span class="ident">result</span>) <span class="kw">as</span> <span class="kw">_</span>;
+    <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">aero_syscall::syscall_result_as_usize</span>(<span class="ident">result</span>) <span class="kw">as</span> <span class="kw">_</span>;
+
+    <span class="ident"><span class="kw">crate</span>::arch::signals::syscall_check_signals</span>(<span class="ident">result</span> <span class="kw">as</span> <span class="ident">isize</span>, <span class="ident">sys</span>, <span class="ident">stack</span>);
+    <span class="ident">stack</span>.<span class="ident">rax</span> <span class="op">=</span> <span class="ident">result</span>;
 }
 
 <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> {
@@ -524,5 +546,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (ec4bcaac4 2022-01-15)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (bd3cb5256 2022-01-16)" ></div>
 </body></html>

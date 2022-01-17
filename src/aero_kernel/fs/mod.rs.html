@@ -309,6 +309,8 @@
 <span id="306">306</span>
 <span id="307">307</span>
 <span id="308">308</span>
+<span id="309">309</span>
+<span id="310">310</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -438,6 +440,7 @@
     <span class="ident">Busy</span>,
     <span class="ident">NotDirectory</span>,
     <span class="ident">IsPipe</span>,
+    <span class="ident">Interrupted</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">FileSystemError</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">AeroSyscallError</span> {
@@ -449,6 +452,7 @@
             <span class="ident">FileSystemError::Busy</span> =&gt; <span class="ident">AeroSyscallError::EBUSY</span>,
             <span class="ident">FileSystemError::NotDirectory</span> =&gt; <span class="ident">AeroSyscallError::ENOTDIR</span>,
             <span class="ident">FileSystemError::IsPipe</span> =&gt; <span class="ident">AeroSyscallError::ESPIPE</span>,
+            <span class="ident">FileSystemError::Interrupted</span> =&gt; <span class="ident">AeroSyscallError::EINTR</span>,
         }
     }
 }
@@ -618,5 +622,5 @@
     <span class="prelude-val">Ok</span>(())
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (ec4bcaac4 2022-01-15)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (bd3cb5256 2022-01-16)" ></div>
 </body></html>

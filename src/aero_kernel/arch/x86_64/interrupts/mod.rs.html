@@ -386,6 +386,11 @@
 <span id="383">383</span>
 <span id="384">384</span>
 <span id="385">385</span>
+<span id="386">386</span>
+<span id="387">387</span>
+<span id="388">388</span>
+<span id="389">389</span>
+<span id="390">390</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -641,6 +646,9 @@
                 <span class="string">&quot;mov rdi, rsp\n&quot;</span>,
                 <span class="string">&quot;call __interrupt_&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>), <span class="string">&quot;\n&quot;</span>,
 
+                <span class="string">&quot;mov rdi, rsp\n&quot;</span>,
+                <span class="string">&quot;call interrupt_check_signals_error_stack\n&quot;</span>,
+
                 <span class="string">&quot;call unmap_pti\n&quot;</span>,
 
                 <span class="comment">// Pop the error code.</span>
@@ -686,6 +694,9 @@
                 <span class="string">&quot;mov rdi, rsp\n&quot;</span>,
                 <span class="string">&quot;call __interrupt_&quot;</span>, <span class="macro">stringify!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>), <span class="string">&quot;\n&quot;</span>,
 
+                <span class="string">&quot;mov rdi, rsp\n&quot;</span>,
+                <span class="string">&quot;call interrupt_check_signals\n&quot;</span>,
+
                 <span class="string">&quot;call unmap_pti\n&quot;</span>,
 
                 <span class="macro-nonterminal">$</span><span class="macro">crate::utils::pop_preserved!</span>(),
@@ -724,7 +735,6 @@
                 <span class="string">&quot;call unmap_pti\n&quot;</span>,
 
                 <span class="macro-nonterminal">$</span><span class="macro">crate::utils::pop_scratch!</span>(),
-
                 <span class="macro-nonterminal">$</span><span class="macro">crate::utils::swapgs_iff_ring3_fast!</span>(),
                 <span class="string">&quot;iretq\n&quot;</span>,
             }
@@ -772,5 +782,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (ec4bcaac4 2022-01-15)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (bd3cb5256 2022-01-16)" ></div>
 </body></html>
