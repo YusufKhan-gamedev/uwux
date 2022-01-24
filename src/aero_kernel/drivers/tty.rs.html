@@ -3,8 +3,7 @@
         </a><h2 class="location"></h2>
     </nav>
     <nav class="sidebar"><a class="sidebar-logo" href="../../../aero_kernel/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div>
-        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../aero_kernel/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><div class="theme-picker hidden"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><form class="search-form"><div class="search-container"><div>
-                                <input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
+        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../aero_kernel/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><div class="theme-picker hidden"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="22" height="22" alt="Pick another theme!" src="../../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><form class="search-form"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -821,31 +820,6 @@
 <span id="815">815</span>
 <span id="816">816</span>
 <span id="817">817</span>
-<span id="818">818</span>
-<span id="819">819</span>
-<span id="820">820</span>
-<span id="821">821</span>
-<span id="822">822</span>
-<span id="823">823</span>
-<span id="824">824</span>
-<span id="825">825</span>
-<span id="826">826</span>
-<span id="827">827</span>
-<span id="828">828</span>
-<span id="829">829</span>
-<span id="830">830</span>
-<span id="831">831</span>
-<span id="832">832</span>
-<span id="833">833</span>
-<span id="834">834</span>
-<span id="835">835</span>
-<span id="836">836</span>
-<span id="837">837</span>
-<span id="838">838</span>
-<span id="839">839</span>
-<span id="840">840</span>
-<span id="841">841</span>
-<span id="842">842</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -1125,24 +1099,12 @@
 
             <span class="ident">aero_syscall::TCGETS</span> =&gt; {
                 <span class="kw">let</span> <span class="ident">termios</span> <span class="op">=</span> <span class="ident">VirtAddr::new</span>(<span class="ident">arg</span> <span class="kw">as</span> <span class="ident">u64</span>);
-                <span class="kw">let</span> <span class="ident">termios</span> <span class="op">=</span> <span class="kw">unsafe</span> {
-                    <span class="ident">core::slice::from_raw_parts_mut</span>(
-                        <span class="ident">termios</span>.<span class="ident">as_mut_ptr</span>::<span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>(),
-                        <span class="ident">core::mem::size_of</span>::<span class="op">&lt;</span><span class="ident">aero_syscall::Termios</span><span class="op">&gt;</span>(),
-                    )
-                };
+                <span class="kw">let</span> <span class="ident">termios</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="kw-2">&amp;mut</span> <span class="kw-2">*</span>(<span class="ident">termios</span>.<span class="ident">as_mut_ptr</span>::<span class="op">&lt;</span><span class="ident">aero_syscall::Termios</span><span class="op">&gt;</span>()) };
 
                 <span class="kw">let</span> <span class="ident">lock</span> <span class="op">=</span> <span class="ident">TERMIOS</span>.<span class="ident">lock_irq</span>();
                 <span class="kw">let</span> <span class="ident">this</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">lock</span>;
 
-                <span class="kw">let</span> <span class="ident">this</span> <span class="op">=</span> <span class="kw">unsafe</span> {
-                    <span class="ident">core::slice::from_raw_parts</span>(
-                        <span class="ident">this</span> <span class="kw">as</span> <span class="kw-2">*const</span> <span class="ident">aero_syscall::Termios</span> <span class="kw">as</span> <span class="kw-2">*const</span> <span class="ident">u8</span>,
-                        <span class="ident">core::mem::size_of</span>::<span class="op">&lt;</span><span class="ident">aero_syscall::Termios</span><span class="op">&gt;</span>(),
-                    )
-                };
-
-                <span class="ident">termios</span>.<span class="ident">copy_from_slice</span>(<span class="ident">this</span>);
+                <span class="kw-2">*</span><span class="ident">termios</span> <span class="op">=</span> <span class="ident">this</span>.<span class="ident">clone</span>();
                 <span class="prelude-val">Ok</span>(<span class="number">0x00</span>)
             }
 
@@ -1154,25 +1116,12 @@
                 <span class="ident">core::mem::drop</span>(<span class="ident">stdin</span>);
 
                 <span class="kw">let</span> <span class="ident">termios</span> <span class="op">=</span> <span class="ident">VirtAddr::new</span>(<span class="ident">arg</span> <span class="kw">as</span> <span class="ident">u64</span>);
-
-                <span class="kw">let</span> <span class="ident">termios</span> <span class="op">=</span> <span class="kw">unsafe</span> {
-                    <span class="ident">core::slice::from_raw_parts</span>(
-                        <span class="ident">termios</span>.<span class="ident">as_mut_ptr</span>::<span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>(),
-                        <span class="ident">core::mem::size_of</span>::<span class="op">&lt;</span><span class="ident">aero_syscall::Termios</span><span class="op">&gt;</span>(),
-                    )
-                };
+                <span class="kw">let</span> <span class="ident">termios</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="kw-2">&amp;</span><span class="kw-2">*</span>(<span class="ident">termios</span>.<span class="ident">as_mut_ptr</span>::<span class="op">&lt;</span><span class="ident">aero_syscall::Termios</span><span class="op">&gt;</span>()) };
 
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">lock</span> <span class="op">=</span> <span class="ident">TERMIOS</span>.<span class="ident">lock_irq</span>();
                 <span class="kw">let</span> <span class="ident">this</span> <span class="op">=</span> <span class="kw-2">&amp;mut</span> <span class="kw-2">*</span><span class="ident">lock</span>;
 
-                <span class="kw">let</span> <span class="ident">this</span> <span class="op">=</span> <span class="kw">unsafe</span> {
-                    <span class="ident">core::slice::from_raw_parts_mut</span>(
-                        <span class="ident">this</span> <span class="kw">as</span> <span class="kw-2">*mut</span> <span class="ident">aero_syscall::Termios</span> <span class="kw">as</span> <span class="kw-2">*mut</span> <span class="ident">u8</span>,
-                        <span class="ident">core::mem::size_of</span>::<span class="op">&lt;</span><span class="ident">aero_syscall::Termios</span><span class="op">&gt;</span>(),
-                    )
-                };
-
-                <span class="ident">this</span>.<span class="ident">copy_from_slice</span>(<span class="ident">termios</span>);
+                <span class="kw-2">*</span><span class="ident">this</span> <span class="op">=</span> <span class="ident">termios</span>.<span class="ident">clone</span>();
                 <span class="prelude-val">Ok</span>(<span class="number">0x00</span>)
             }
 
@@ -1689,5 +1638,5 @@
 
 <span class="macro">crate::module_init!</span>(<span class="ident">init_tty</span>);
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (5e57faa78 2022-01-19)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (84322efad 2022-01-23)" ></div>
 </body></html>
