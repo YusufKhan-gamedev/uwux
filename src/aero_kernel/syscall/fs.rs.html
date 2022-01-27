@@ -3,7 +3,7 @@
         </a><h2 class="location"></h2>
     </nav>
     <nav class="sidebar"><a class="sidebar-logo" href="../../../aero_kernel/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div>
-        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../aero_kernel/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><div class="theme-picker hidden"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="22" height="22" alt="Pick another theme!" src="../../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><form class="search-form"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
+        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../aero_kernel/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><div class="theme-picker hidden"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="22" height="22" alt="Pick another theme!" src="../../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -361,6 +361,12 @@
 <span id="356">356</span>
 <span id="357">357</span>
 <span id="358">358</span>
+<span id="359">359</span>
+<span id="360">360</span>
+<span id="361">361</span>
+<span id="362">362</span>
+<span id="363">363</span>
+<span id="364">364</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -702,13 +708,13 @@
         .<span class="ident">ok_or</span>(<span class="ident">AeroSyscallError::EBADFD</span>)<span class="question-mark">?</span>;
 
     <span class="kw">match</span> <span class="ident">command</span> {
-        <span class="comment">// Get the fd flags:</span>
+        <span class="comment">// Get the value of file descriptor flags.</span>
         <span class="ident">aero_syscall::prelude::F_GETFD</span> =&gt; {
             <span class="kw">let</span> <span class="ident">flags</span> <span class="op">=</span> <span class="ident">handle</span>.<span class="ident">fd_flags</span>.<span class="ident">lock</span>().<span class="ident">bits</span>();
             <span class="prelude-val">Ok</span>(<span class="ident">flags</span>)
         }
 
-        <span class="comment">// Set the FD flags:</span>
+        <span class="comment">// Set the value of file descriptor flags:</span>
         <span class="ident">aero_syscall::prelude::F_SETFD</span> =&gt; {
             <span class="kw">let</span> <span class="ident">flags</span> <span class="op">=</span> <span class="ident">FdFlags::from_bits</span>(<span class="ident">arg</span>).<span class="ident">ok_or</span>(<span class="ident">AeroSyscallError::EINVAL</span>)<span class="question-mark">?</span>;
             <span class="ident">handle</span>.<span class="ident">fd_flags</span>.<span class="ident">lock</span>().<span class="ident">insert</span>(<span class="ident">flags</span>);
@@ -716,9 +722,15 @@
             <span class="prelude-val">Ok</span>(<span class="number">0x00</span>)
         }
 
+        <span class="comment">// Get the value of file status flags:</span>
+        <span class="ident">aero_syscall::prelude::F_GETFL</span> =&gt; {
+            <span class="kw">let</span> <span class="ident">flags</span> <span class="op">=</span> <span class="ident">handle</span>.<span class="ident">flags</span>.<span class="ident">bits</span>();
+            <span class="prelude-val">Ok</span>(<span class="ident">flags</span>)
+        }
+
         <span class="kw">_</span> =&gt; <span class="macro">unimplemented!</span>(),
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (84322efad 2022-01-23)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (6abb6385b 2022-01-26)" ></div>
 </body></html>

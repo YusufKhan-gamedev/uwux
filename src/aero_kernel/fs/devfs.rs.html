@@ -3,7 +3,7 @@
         </a><h2 class="location"></h2>
     </nav>
     <nav class="sidebar"><a class="sidebar-logo" href="../../../aero_kernel/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div>
-        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../aero_kernel/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><div class="theme-picker hidden"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="22" height="22" alt="Pick another theme!" src="../../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><form class="search-form"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
+        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../aero_kernel/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><div class="theme-picker hidden"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="22" height="22" alt="Pick another theme!" src="../../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -317,6 +317,41 @@
 <span id="312">312</span>
 <span id="313">313</span>
 <span id="314">314</span>
+<span id="315">315</span>
+<span id="316">316</span>
+<span id="317">317</span>
+<span id="318">318</span>
+<span id="319">319</span>
+<span id="320">320</span>
+<span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
+<span id="324">324</span>
+<span id="325">325</span>
+<span id="326">326</span>
+<span id="327">327</span>
+<span id="328">328</span>
+<span id="329">329</span>
+<span id="330">330</span>
+<span id="331">331</span>
+<span id="332">332</span>
+<span id="333">333</span>
+<span id="334">334</span>
+<span id="335">335</span>
+<span id="336">336</span>
+<span id="337">337</span>
+<span id="338">338</span>
+<span id="339">339</span>
+<span id="340">340</span>
+<span id="341">341</span>
+<span id="342">342</span>
+<span id="343">343</span>
+<span id="344">344</span>
+<span id="345">345</span>
+<span id="346">346</span>
+<span id="347">347</span>
+<span id="348">348</span>
+<span id="349">349</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -350,12 +385,15 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::fs::lookup_path</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::fs::Path</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::logger</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::rendy::RendyInfo</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::cache::DirCacheItem</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::inode::INodeInterface</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::ramfs::RamFs</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::FileSystemError</span>;
 <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">FileSystem</span>, <span class="prelude-ty">Result</span>, <span class="ident">MOUNT_MANAGER</span>};
+
+<span class="kw">use</span> <span class="ident">aero_syscall::prelude</span>::<span class="kw-2">*</span>;
 
 <span class="macro">lazy_static::lazy_static!</span> {
     <span class="kw">static</span> <span class="kw-2">ref</span> <span class="ident">DEV_FILESYSTEM</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">DevFs</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">DevFs::new</span>();
@@ -527,17 +565,34 @@
     }
 }
 
-<span class="kw">struct</span> <span class="ident">DevFb</span>(<span class="ident">usize</span>);
+<span class="kw">struct</span> <span class="ident">DevFb</span> {
+    <span class="ident">marker</span>: <span class="ident">usize</span>,
+    <span class="ident">vinfo</span>: <span class="ident">FramebufferVScreenInfo</span>,
+}
 
 <span class="kw">impl</span> <span class="ident">DevFb</span> {
-    <span class="kw">fn</span> <span class="ident">new</span>() -&gt; <span class="ident">Arc</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
-        <span class="ident">Arc::new</span>(<span class="self">Self</span>(<span class="ident">alloc_device_marker</span>()))
+    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">info</span>: <span class="ident">RendyInfo</span>) -&gt; <span class="ident">Arc</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
+        <span class="ident">Arc::new</span>(<span class="self">Self</span> {
+            <span class="ident">marker</span>: <span class="ident">alloc_device_marker</span>(),
+            <span class="ident">vinfo</span>: <span class="ident">FramebufferVScreenInfo</span> {
+                <span class="ident">xres</span>: <span class="ident">info</span>.<span class="ident">horizontal_resolution</span> <span class="kw">as</span> <span class="ident">u32</span>,
+                <span class="ident">yres</span>: <span class="ident">info</span>.<span class="ident">vertical_resolution</span> <span class="kw">as</span> <span class="ident">u32</span>,
+
+                <span class="ident">xres_virtual</span>: <span class="ident">info</span>.<span class="ident">horizontal_resolution</span> <span class="kw">as</span> <span class="ident">u32</span>,
+                <span class="ident">yres_virtual</span>: <span class="ident">info</span>.<span class="ident">vertical_resolution</span> <span class="kw">as</span> <span class="ident">u32</span>,
+
+                <span class="ident">bits_per_pixel</span>: <span class="ident">info</span>.<span class="ident">bits_per_pixel</span> <span class="kw">as</span> <span class="ident">u32</span>,
+
+                <span class="comment">// TODO: Implement rest of the members</span>
+                ..<span class="ident">Default::default</span>()
+            },
+        })
     }
 }
 
 <span class="kw">impl</span> <span class="ident">Device</span> <span class="kw">for</span> <span class="ident">DevFb</span> {
     <span class="kw">fn</span> <span class="ident">device_marker</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">usize</span> {
-        <span class="self">self</span>.<span class="number">0</span>
+        <span class="self">self</span>.<span class="ident">marker</span>
     }
 
     <span class="kw">fn</span> <span class="ident">device_name</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">String</span> {
@@ -570,6 +625,19 @@
                 <span class="prelude-val">Ok</span>(<span class="ident">count</span>)
             })
             .<span class="ident">expect</span>(<span class="string">&quot;/dev/fb: terminal not initialized&quot;</span>)
+    }
+
+    <span class="kw">fn</span> <span class="ident">ioctl</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">command</span>: <span class="ident">usize</span>, <span class="ident">arg</span>: <span class="ident">usize</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
+        <span class="kw">match</span> <span class="ident">command</span> {
+            <span class="ident">FBIOGET_VSCREENINFO</span> =&gt; {
+                <span class="kw">let</span> <span class="ident">struc</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="kw-2">&amp;mut</span> <span class="kw-2">*</span>(<span class="ident">arg</span> <span class="kw">as</span> <span class="kw-2">*mut</span> <span class="ident">FramebufferVScreenInfo</span>) };
+
+                <span class="kw-2">*</span><span class="ident">struc</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">vinfo</span>.<span class="ident">clone</span>();
+                <span class="prelude-val">Ok</span>(<span class="number">0x00</span>)
+            }
+
+            <span class="kw">_</span> =&gt; <span class="prelude-val">Err</span>(<span class="ident">FileSystemError::NotSupported</span>),
+        }
     }
 }
 
@@ -617,10 +685,12 @@
     <span class="kw">let</span> <span class="ident">inode</span> <span class="op">=</span> <span class="ident">lookup_path</span>(<span class="ident">Path::new</span>(<span class="string">&quot;/dev&quot;</span>))<span class="question-mark">?</span>;
     <span class="ident">MOUNT_MANAGER</span>.<span class="ident">mount</span>(<span class="ident">inode</span>, <span class="ident">DEV_FILESYSTEM</span>.<span class="ident">clone</span>())<span class="question-mark">?</span>;
 
+    <span class="kw">let</span> <span class="ident">rendy_info</span> <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::rendy::get_rendy_info</span>();
+
     {
         <span class="kw">let</span> <span class="ident">null</span> <span class="op">=</span> <span class="ident">DEV_NULL</span>.<span class="ident">call_once</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">DevNull::new</span>());
         <span class="kw">let</span> <span class="ident">kmsg</span> <span class="op">=</span> <span class="ident">DEV_KMSG</span>.<span class="ident">call_once</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">DevKmsg::new</span>());
-        <span class="kw">let</span> <span class="ident">fb</span> <span class="op">=</span> <span class="ident">DEV_FB</span>.<span class="ident">call_once</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">DevFb::new</span>());
+        <span class="kw">let</span> <span class="ident">fb</span> <span class="op">=</span> <span class="ident">DEV_FB</span>.<span class="ident">call_once</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">DevFb::new</span>(<span class="ident">rendy_info</span>));
         <span class="kw">let</span> <span class="ident">urandom</span> <span class="op">=</span> <span class="ident">DEV_URANDOM</span>.<span class="ident">call_once</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">DevUrandom::new</span>());
 
         <span class="ident">install_device</span>(<span class="ident">null</span>.<span class="ident">clone</span>())<span class="question-mark">?</span>;
@@ -632,5 +702,5 @@
     <span class="prelude-val">Ok</span>(())
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (84322efad 2022-01-23)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (6abb6385b 2022-01-26)" ></div>
 </body></html>

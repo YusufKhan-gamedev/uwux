@@ -3,7 +3,7 @@
         </a><h2 class="location"></h2>
     </nav>
     <nav class="sidebar"><a class="sidebar-logo" href="../../../../aero_kernel/index.html"><div class="logo-container"><img class="rust-logo" src="../../../../rust-logo.svg" alt="logo"></div>
-        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../../aero_kernel/index.html"><img class="rust-logo" src="../../../../rust-logo.svg" alt="logo"></a><nav class="sub"><div class="theme-picker hidden"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="22" height="22" alt="Pick another theme!" src="../../../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><form class="search-form"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../wheel.svg"></a></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
+        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../../aero_kernel/index.html"><img class="rust-logo" src="../../../../rust-logo.svg" alt="logo"></a><nav class="sub"><div class="theme-picker hidden"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="22" height="22" alt="Pick another theme!" src="../../../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../wheel.svg"></a></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -417,6 +417,9 @@
 <span id="412">412</span>
 <span id="413">413</span>
 <span id="414">414</span>
+<span id="415">415</span>
+<span id="416">416</span>
+<span id="417">417</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -444,6 +447,7 @@
 <span class="kw">use</span> <span class="ident">core::alloc::Layout</span>;
 <span class="kw">use</span> <span class="ident">core::ptr::Unique</span>;
 
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::fs::cache::DirCacheItem</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::mem::paging</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::syscall</span>::{<span class="ident">ExecArgs</span>, <span class="ident">RegistersFrame</span>, <span class="ident">SyscallFrame</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::userland::vm</span>::{<span class="ident">LoadedBinary</span>, <span class="ident">Vm</span>};
@@ -703,7 +707,7 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">exec</span>(
         <span class="kw-2">&amp;mut</span> <span class="self">self</span>,
         <span class="ident">vm</span>: <span class="kw-2">&amp;</span><span class="ident">Vm</span>,
-        <span class="ident">loaded_binary</span>: <span class="ident">LoadedBinary</span>,
+        <span class="ident">executable</span>: <span class="ident">DirCacheItem</span>,
 
         <span class="ident">argv</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ExecArgs</span><span class="op">&gt;</span>,
         <span class="ident">envv</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ExecArgs</span><span class="op">&gt;</span>,
@@ -733,6 +737,8 @@
         <span class="ident">vm</span>.<span class="ident">log</span>();
 
         <span class="ident">address_space</span>.<span class="ident">switch</span>(); <span class="comment">// Perform the address space switch</span>
+
+        <span class="kw">let</span> <span class="ident">loaded_binary</span> <span class="op">=</span> <span class="ident">vm</span>.<span class="ident">load_bin</span>(<span class="ident">executable</span>);
 
         <span class="self">self</span>.<span class="ident">context</span> <span class="op">=</span> <span class="ident">Unique::dangling</span>();
         <span class="self">self</span>.<span class="ident">address_space</span> <span class="op">=</span> <span class="ident">address_space</span>; <span class="comment">// Update the address space reference</span>
@@ -832,5 +838,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (84322efad 2022-01-23)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (6abb6385b 2022-01-26)" ></div>
 </body></html>
