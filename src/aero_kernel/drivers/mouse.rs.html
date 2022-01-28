@@ -424,7 +424,7 @@
 }
 
 <span class="doccomment">/// Initialise the PS/2 Mouse.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init</span>() {
+<span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">init</span>() {
     <span class="kw">unsafe</span> {
         <span class="comment">// Enable the auxiliary device - mouse.</span>
         <span class="ident">io::outb</span>(<span class="number">0x64</span>, <span class="number">0xA8</span>);
