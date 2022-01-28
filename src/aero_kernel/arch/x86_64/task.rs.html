@@ -420,6 +420,8 @@
 <span id="415">415</span>
 <span id="416">416</span>
 <span id="417">417</span>
+<span id="418">418</span>
+<span id="419">419</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -450,8 +452,8 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::fs::cache::DirCacheItem</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::mem::paging</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::syscall</span>::{<span class="ident">ExecArgs</span>, <span class="ident">RegistersFrame</span>, <span class="ident">SyscallFrame</span>};
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::userland::vm</span>::{<span class="ident">LoadedBinary</span>, <span class="ident">Vm</span>};
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils::StackHelper</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::userland::vm::Vm</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils</span>::{<span class="ident">io</span>, <span class="ident">StackHelper</span>};
 
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::controlregs</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::gdt::Ring</span>;
@@ -700,7 +702,9 @@
             <span class="ident">context_switch_rsp</span>: <span class="ident">VirtAddr::new</span>(<span class="ident">switch_stack</span> <span class="kw">as</span> <span class="ident">u64</span>),
             <span class="ident">address_space</span>: <span class="ident">new_address_space</span>,
             <span class="ident">rpl</span>: <span class="ident">Ring::Ring3</span>,
-            <span class="ident">fs_base</span>: <span class="ident">VirtAddr::zero</span>(),
+
+            <span class="comment">// The FS base is inherited from the parent process.</span>
+            <span class="ident">fs_base</span>: <span class="self">self</span>.<span class="ident">fs_base</span>.<span class="ident">clone</span>(),
         })
     }
 
