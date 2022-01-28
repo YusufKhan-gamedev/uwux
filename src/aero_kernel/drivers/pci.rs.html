@@ -952,7 +952,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">DeviceType</span> {
-    <span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">base_class</span>: <span class="ident">u32</span>, <span class="ident">sub_class</span>: <span class="ident">u32</span>) -&gt; <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">base_class</span>: <span class="ident">u32</span>, <span class="ident">sub_class</span>: <span class="ident">u32</span>) -&gt; <span class="self">Self</span> {
         <span class="kw">match</span> (<span class="ident">base_class</span>, <span class="ident">sub_class</span>) {
             (<span class="number">0x00</span>, <span class="number">0x00</span>) =&gt; <span class="ident">DeviceType::LegacyNotVgaCompatible</span>,
             (<span class="number">0x00</span>, <span class="number">0x01</span>) =&gt; <span class="ident">DeviceType::LegacyVgaCompatible</span>,
@@ -1088,7 +1088,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">Vendor</span> {
-    <span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">id</span>: <span class="ident">u32</span>) -&gt; <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">id</span>: <span class="ident">u32</span>) -&gt; <span class="self">Self</span> {
         <span class="kw">match</span> <span class="ident">id</span> {
             <span class="number">0x8086</span> =&gt; <span class="ident"><span class="self">Self</span>::Intel</span>,
             <span class="number">0x1022</span> =&gt; <span class="ident"><span class="self">Self</span>::AMD</span>,
@@ -1098,7 +1098,7 @@
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">is_valid</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_valid</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
         <span class="kw">match</span> <span class="self">self</span> {
             <span class="ident"><span class="self">Self</span>::Unknown</span>(<span class="ident">id</span>) =&gt; <span class="kw-2">*</span><span class="ident">id</span> <span class="op">!</span><span class="op">=</span> <span class="number">0xFFFF</span>,
             <span class="kw">_</span> =&gt; <span class="bool-val">true</span>,
@@ -1109,7 +1109,7 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PciHeader</span>(<span class="ident">u32</span>);
 
 <span class="kw">impl</span> <span class="ident">PciHeader</span> {
-    <span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">bus</span>: <span class="ident">u8</span>, <span class="ident">device</span>: <span class="ident">u8</span>, <span class="ident">function</span>: <span class="ident">u8</span>) -&gt; <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">bus</span>: <span class="ident">u8</span>, <span class="ident">device</span>: <span class="ident">u8</span>, <span class="ident">function</span>: <span class="ident">u8</span>) -&gt; <span class="self">Self</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0</span>;
 
         <span class="ident">result</span>.<span class="ident">set_bits</span>(<span class="number">0</span>..<span class="number">3</span>, <span class="ident">function</span> <span class="kw">as</span> <span class="ident">u32</span>);
@@ -1120,15 +1120,15 @@
         <span class="self">Self</span>(<span class="ident">result</span>)
     }
 
-    <span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">bus</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u8</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">bus</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u8</span> {
         <span class="self">self</span>.<span class="number">0</span>.<span class="ident">get_bits</span>(<span class="number">8</span>..<span class="number">16</span>) <span class="kw">as</span> <span class="ident">u8</span>
     }
 
-    <span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">device</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u8</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">device</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u8</span> {
         <span class="self">self</span>.<span class="number">0</span>.<span class="ident">get_bits</span>(<span class="number">3</span>..<span class="number">8</span>) <span class="kw">as</span> <span class="ident">u8</span>
     }
 
-    <span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">function</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u8</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">function</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u8</span> {
         <span class="self">self</span>.<span class="number">0</span>.<span class="ident">get_bits</span>(<span class="number">0</span>..<span class="number">3</span>) <span class="kw">as</span> <span class="ident">u8</span>
     }
 
@@ -1167,7 +1167,7 @@
     <span class="doccomment">/// Enables response to memory accesses on the primary interface that address a device</span>
     <span class="doccomment">/// that resides behind the bridge in both the memory mapped I/O and prefetchable memory</span>
     <span class="doccomment">/// ranges or targets a location within the bridge itself.</span>
-    <span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">enable_mmio</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">enable_mmio</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) {
         <span class="comment">// Read the Command Register from the device&#39;s PCI Configuration Space, set bit 1</span>
         <span class="comment">// (MMIO bit) and write the modified Command Register.</span>
         <span class="kw">let</span> <span class="ident">command</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="self">self</span>.<span class="ident">read</span>::<span class="op">&lt;</span><span class="ident">u16</span><span class="op">&gt;</span>(<span class="number">0x04</span>) };
@@ -1178,7 +1178,7 @@
     <span class="doccomment">/// Enable the bridge to operate as a master on the primary interface for memory and I/O</span>
     <span class="doccomment">/// transactions forwarded from the secondary interface. This allows the PCI device to perform</span>
     <span class="doccomment">/// DMA.</span>
-    <span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">enable_bus_mastering</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">enable_bus_mastering</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) {
         <span class="comment">// Read the Command Register from the device&#39;s PCI Configuration Space, set bit 2</span>
         <span class="comment">// (bus mastering bit) and write the modified Command Register. Note that some BISOs do</span>
         <span class="comment">// enable bus mastering by default.</span>
@@ -1189,7 +1189,7 @@
 
     <span class="doccomment">/// Returns the value stored in the PCI vendor ID register which is used to identify</span>
     <span class="doccomment">/// the manufacturer of the PCI device.</span>
-    <span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">get_vendor</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Vendor</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_vendor</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Vendor</span> {
         <span class="kw">unsafe</span> { <span class="ident">Vendor::new</span>(<span class="self">self</span>.<span class="ident">read</span>::<span class="op">&lt;</span><span class="ident">u16</span><span class="op">&gt;</span>(<span class="number">0x00</span>)) }
     }
 
@@ -1199,16 +1199,16 @@
         <span class="ident">DeviceType::new</span>(<span class="ident">id</span>.<span class="ident">get_bits</span>(<span class="number">24</span>..<span class="number">32</span>), <span class="ident">id</span>.<span class="ident">get_bits</span>(<span class="number">16</span>..<span class="number">24</span>))
     }
 
-    <span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">has_multiple_functions</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">has_multiple_functions</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
         <span class="kw">unsafe</span> { <span class="self">self</span>.<span class="ident">read</span>::<span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>(<span class="number">0x0c</span>) }.<span class="ident">get_bit</span>(<span class="number">23</span>)
     }
 
-    <span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">pin</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u8</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">pin</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u8</span> {
         <span class="kw">unsafe</span> { (<span class="self">self</span>.<span class="ident">read</span>::<span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>(<span class="number">0x3D</span>) <span class="op">&gt;</span><span class="op">&gt;</span> (<span class="number">0x3D</span> <span class="op">&amp;</span> <span class="number">0b11</span>) <span class="op">*</span> <span class="number">8</span>) <span class="kw">as</span> <span class="ident">u8</span> }
     }
 
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">unused</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">resolve_irq_mapping</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">resolve_irq_mapping</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span> {
         <span class="ident">PCI_ROUTER</span>
             .<span class="ident">get</span>()
             .<span class="ident">map</span>(<span class="op">|</span><span class="ident">r</span><span class="op">|</span> {
@@ -1230,13 +1230,13 @@
 
     <span class="doccomment">/// Returnes the value stored in the PCI header type register which is used to</span>
     <span class="doccomment">/// indicate layout for bytes,of the device’s configuration space.</span>
-    <span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">get_header_type</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u8</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_header_type</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u8</span> {
         <span class="kw">unsafe</span> { <span class="self">self</span>.<span class="ident">read</span>::<span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>(<span class="number">0x0E</span>) <span class="kw">as</span> <span class="ident">u8</span> <span class="op">&amp;</span> <span class="number">0b01111111</span> }
     }
 
     <span class="doccomment">/// Returns the value stored in the bar of the provided slot. Returns [`None`] if the</span>
     <span class="doccomment">/// bar is empty.</span>
-    <span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">get_bar</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">bar</span>: <span class="ident">u8</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Bar</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_bar</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">bar</span>: <span class="ident">u8</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Bar</span><span class="op">&gt;</span> {
         <span class="macro">debug_assert!</span>(<span class="self">self</span>.<span class="ident">get_header_type</span>() <span class="op">==</span> <span class="number">0</span>); <span class="comment">// Ensure header type == 0</span>
         <span class="macro">debug_assert!</span>(<span class="ident">bar</span> <span class="op">&lt;</span><span class="op">=</span> <span class="number">5</span>); <span class="comment">// Make sure the bar is valid.</span>
 
@@ -1302,27 +1302,27 @@
     <span class="comment">// (device-specific) registers into Memory or I/O Spaces. Refer to the PCI Local Bus</span>
     <span class="comment">// Specification for a detailed discussion of base address registers.</span>
 
-    <span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">base_address0</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u32</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">base_address0</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u32</span> {
         <span class="kw">unsafe</span> { <span class="self">self</span>.<span class="ident">read</span>::<span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>(<span class="number">0x10</span>) }
     }
 
-    <span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">base_address1</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u32</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">base_address1</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u32</span> {
         <span class="kw">unsafe</span> { <span class="self">self</span>.<span class="ident">read</span>::<span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>(<span class="number">0x14</span>) }
     }
 
-    <span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">base_address2</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u32</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">base_address2</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u32</span> {
         <span class="kw">unsafe</span> { <span class="self">self</span>.<span class="ident">read</span>::<span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>(<span class="number">0x18</span>) }
     }
 
-    <span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">base_address3</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u32</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">base_address3</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u32</span> {
         <span class="kw">unsafe</span> { <span class="self">self</span>.<span class="ident">read</span>::<span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>(<span class="number">0x1C</span>) }
     }
 
-    <span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">base_address4</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u32</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">base_address4</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u32</span> {
         <span class="kw">unsafe</span> { <span class="self">self</span>.<span class="ident">read</span>::<span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>(<span class="number">0x20</span>) }
     }
 
-    <span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">program_interface</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">ProgramInterface</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">program_interface</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">ProgramInterface</span> {
         <span class="kw">let</span> <span class="ident">bits</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="self">self</span>.<span class="ident">read</span>::<span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>(<span class="number">0x09</span>) };
         <span class="ident">ProgramInterface::from_bits_truncate</span>(<span class="ident">bits</span> <span class="kw">as</span> <span class="ident">u8</span>)
     }
@@ -1352,16 +1352,16 @@
     }
 }
 
-<span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">register_device_driver</span>(<span class="ident">handle</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">PciDeviceHandle</span><span class="op">&gt;</span>) {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">register_device_driver</span>(<span class="ident">handle</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">PciDeviceHandle</span><span class="op">&gt;</span>) {
     <span class="ident">PCI_TABLE</span>.<span class="ident">lock</span>().<span class="ident">inner</span>.<span class="ident">push</span>(<span class="ident">PciDevice</span> { <span class="ident">handle</span> })
 }
 
-<span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">init_pci_router</span>(<span class="ident">pci_router</span>: <span class="ident">PciRoutingTable</span>) {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init_pci_router</span>(<span class="ident">pci_router</span>: <span class="ident">PciRoutingTable</span>) {
     <span class="ident">PCI_ROUTER</span>.<span class="ident">call_once</span>(<span class="kw">move</span> <span class="op">|</span><span class="op">|</span> <span class="ident">pci_router</span>);
 }
 
 <span class="doccomment">/// Lookup and initialize all PCI devices.</span>
-<span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">init</span>(<span class="ident">offset_table</span>: <span class="kw-2">&amp;mut</span> <span class="ident">OffsetPageTable</span>) {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init</span>(<span class="ident">offset_table</span>: <span class="kw-2">&amp;mut</span> <span class="ident">OffsetPageTable</span>) {
     <span class="comment">// Check if the MCFG table is avaliable.</span>
     <span class="kw">if</span> <span class="ident">mcfg::is_avaliable</span>() {
         <span class="kw">let</span> <span class="ident">mcfg_table</span> <span class="op">=</span> <span class="ident">mcfg::get_mcfg_table</span>();
