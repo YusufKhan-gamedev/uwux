@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["IMMUTABLE_MASK",""],["SIGNAL_COUNT",""]],"enum":[["SignalError",""],["TriggerResult",""]],"fn":[["can_override","Returns [`true`] if the provided `signal` is overridable."],["check_for_signals",""]],"mod":[["default",""]],"struct":[["Entries",""],["SignalEntry",""],["Signals",""]],"type":[["SignalResult",""]]});

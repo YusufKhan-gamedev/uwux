@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["install_block_device","Installs the provided block `device` into the filesyetm."],["launch",""]],"static":[["BLOCK_DEVS",""]],"struct":[["BlockDevice",""],["Mbr",""],["Partition",""]],"trait":[["BlockDeviceInterface",""],["RawAccess",""]]});

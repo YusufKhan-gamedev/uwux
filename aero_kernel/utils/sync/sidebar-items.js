@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["BlockQueue",""],["IrqGuard","Helper guard structure used to lock interrupts. When dropped, interrupts are enabled again. This is useful for volatile operations where we don’t want to be interrupted."],["Mutex","A spin-based lock providing mutually exclusive access to data."],["MutexGuard",""]]});

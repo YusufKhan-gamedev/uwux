@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["MOUSE_WAIT_TIMEOUT",""]],"fn":[["handle","Handle the mouse interrupt."],["init","Initialise the PS/2 Mouse."],["mouse_wait",""],["mouse_wait_input",""],["mouse_write",""],["sign_extend",""]],"struct":[["MOUSE",""],["Mouse",""],["MouseFlags","Represents the flags currently set for the mouse."],["MouseState",""]]});

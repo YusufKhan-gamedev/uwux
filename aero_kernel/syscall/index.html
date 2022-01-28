@@ -1,0 +1,50 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="System Calls are used to call a kernel service from userland."><meta name="keywords" content="rust, rustlang, rust-lang, syscall"><title>aero_kernel::syscall - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><script defer src="../../main.js"></script>
+    <noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../aero_kernel/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div>
+        </a><h2 class="location"></h2>
+    </nav>
+    <nav class="sidebar"><a class="sidebar-logo" href="../../aero_kernel/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div>
+        </a><h2 class="location"><a href="#">Module syscall</a></h2><div class="sidebar-elems"><div class="block items"><ul><li><a href="#modules">Modules</a></li><li><a href="#structs">Structs</a></li><li><a href="#functions">Functions</a></li></ul></div><div id="sidebar-vars" data-name="syscall" data-ty="mod" data-relpath="./"></div><script defer src="./sidebar-items.js"></script></div></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../aero_kernel/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><div class="theme-picker hidden"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="22" height="22" alt="Pick another theme!" src="../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav></div><section id="main-content" class="content"><div class="main-heading">
+    <h1 class="fqn"><span class="in-band">Module <a href="../index.html">aero_kernel</a>::<wbr><a class="mod" href="#">syscall</a><button id="copy-path" onclick="copy_path(this)" title="Copy item path to clipboard"><img src="../../clipboard.svg" width="19" height="18" alt="Copy item path"></button></span></h1><span class="out-of-band"><a class="srclink" href="../../src/aero_kernel/syscall/mod.rs.html#20-303" title="goto source code">source</a> · <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class="inner">&#x2212;</span>]</a></span></div><details class="rustdoc-toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>System Calls are used to call a kernel service from userland.</p>
+<div><table><thead><tr><th>%rax</th><th>Name</th></tr></thead><tbody>
+<tr><td>0</td><td>read</td></tr>
+<tr><td>1</td><td>write</td></tr>
+<tr><td>2</td><td>open</td></tr>
+<tr><td>3</td><td>close</td></tr>
+<tr><td>4</td><td>shutdown</td></tr>
+<tr><td>5</td><td>exit</td></tr>
+<tr><td>6</td><td>fork</td></tr>
+<tr><td>7</td><td>reboot</td></tr>
+<tr><td>8</td><td>mmap</td></tr>
+<tr><td>9</td><td>munmap</td></tr>
+<tr><td>10</td><td>arch_prctl</td></tr>
+<tr><td>11</td><td>get_dents</td></tr>
+<tr><td>12</td><td>get_cwd</td></tr>
+<tr><td>13</td><td>chdir</td></tr>
+<tr><td>14</td><td>mkdir</td></tr>
+<tr><td>15</td><td>mkdirat</td></tr>
+<tr><td>16</td><td>rmdir</td></tr>
+<tr><td>17</td><td>exec</td></tr>
+<tr><td>18</td><td>log</td></tr>
+<tr><td>19</td><td>uname</td></tr>
+<tr><td>20</td><td>waitpid</td></tr>
+<tr><td>21</td><td>ioctl</td></tr>
+<tr><td>22</td><td>getpid</td></tr>
+<tr><td>23</td><td>socket</td></tr>
+<tr><td>24</td><td>connect</td></tr>
+<tr><td>25</td><td>bind</td></tr>
+<tr><td>26</td><td>listen</td></tr>
+<tr><td>27</td><td>accept</td></tr>
+<tr><td>28</td><td>seek</td></tr>
+<tr><td>29</td><td>gettid</td></tr>
+<tr><td>30</td><td>gettime</td></tr>
+<tr><td>31</td><td>sleep</td></tr>
+<tr><td>32</td><td>access</td></tr>
+<tr><td>33</td><td>pipe</td></tr>
+<tr><td>34</td><td>unlink</td></tr>
+</tbody></table>
+</div></div></details><h2 id="reexports" class="small-section-header"><a href="#reexports">Re-exports</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left import-item"><code>pub use <a class="mod" href="fs/index.html" title="mod aero_kernel::syscall::fs">fs</a>::*;</code></div><div class="item-right docblock-short"></div></div><div class="item-row"><div class="item-left import-item"><code>pub use <a class="mod" href="process/index.html" title="mod aero_kernel::syscall::process">process</a>::*;</code></div><div class="item-right docblock-short"></div></div><div class="item-row"><div class="item-left import-item"><code>pub use <a class="mod" href="time/index.html" title="mod aero_kernel::syscall::time">time</a>::*;</code></div><div class="item-right docblock-short"></div></div></div><h2 id="modules" class="small-section-header"><a href="#modules">Modules</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="mod" href="fs/index.html" title="aero_kernel::syscall::fs mod">fs</a></div><div class="item-right docblock-short"></div></div><div class="item-row"><div class="item-left module-item"><a class="mod" href="net/index.html" title="aero_kernel::syscall::net mod">net</a></div><div class="item-right docblock-short"></div></div><div class="item-row"><div class="item-left module-item"><a class="mod" href="process/index.html" title="aero_kernel::syscall::process mod">process</a></div><div class="item-right docblock-short"></div></div><div class="item-row"><div class="item-left module-item"><a class="mod" href="time/index.html" title="aero_kernel::syscall::time mod">time</a></div><div class="item-right docblock-short"></div></div></div><h2 id="structs" class="small-section-header"><a href="#structs">Structs</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.ExecArgs.html" title="aero_kernel::syscall::ExecArgs struct">ExecArgs</a></div><div class="item-right docblock-short"></div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.RegistersFrame.html" title="aero_kernel::syscall::RegistersFrame struct">RegistersFrame</a></div><div class="item-right docblock-short"></div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.SyscallFrame.html" title="aero_kernel::syscall::SyscallFrame struct">SyscallFrame</a></div><div class="item-right docblock-short"></div></div></div><h2 id="functions" class="small-section-header"><a href="#functions">Functions</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.__inner_syscall.html" title="aero_kernel::syscall::__inner_syscall fn">__inner_syscall</a></div><div class="item-right docblock-short"></div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.exec_args_from_slice.html" title="aero_kernel::syscall::exec_args_from_slice fn">exec_args_from_slice</a></div><div class="item-right docblock-short"></div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.init.html" title="aero_kernel::syscall::init fn">init</a></div><div class="item-right docblock-short"></div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.syscall_handler.html" title="aero_kernel::syscall::syscall_handler fn">syscall_handler</a><a title="unsafe function" href="#"><sup>⚠</sup></a></div><div class="item-right docblock-short"></div></div></div></section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (21b4a9cfd 2022-01-27)" ></div>
+</body></html>

@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["IdeChannel",""],["IdeChannelData",""],["PrdEntry",""],["PrdTable",""]]});

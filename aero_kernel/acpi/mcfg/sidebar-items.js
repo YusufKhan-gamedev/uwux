@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["SIGNATURE",""]],"fn":[["get_mcfg_table","Return a immutable reference to the MCFG table."],["is_avaliable","Returns true if the ACPI table contains the MCFG entry."]],"static":[["MCFG",""]],"struct":[["DeviceConfig",""],["Mcfg","The ACPI MCFG table describes the location of the PCI Express configuration space."]]});

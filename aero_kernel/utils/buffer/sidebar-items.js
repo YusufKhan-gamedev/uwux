@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["RingBuffer","Special special kind of buffer that stores valid UTF-8 text is always a constant size, removing the oldest messages when new messages are received without allocating memory on the kernel heap."]]});
