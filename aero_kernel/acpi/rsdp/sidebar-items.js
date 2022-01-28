@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["RsdtAddress",""]],"fn":[["find_rsdt_address",""],["validate_checksum",""],["validate_rsdt_checksum",""]],"struct":[["Rsdp10",""],["Rsdp20",""],["Rsdt",""]],"trait":[["RsdtHeader",""],["RsdtTyp",""]]});

@@ -1,1 +1,0 @@
-initSidebarItems({"constant":[["REDZONE_SIZE",""],["SYSCALL_INSTRUCTION_SIZE",""]],"fn":[["interrupt_check_signals","Helper function to check for any pending signals from an interrupt."],["interrupt_check_signals_error_stack",""],["sigreturn",""],["syscall_check_signals","Helper function to check for any pending signals from a sycall."]],"struct":[["SignalFrame",""]]});

@@ -1,3 +1,0 @@
-(function() {var implementors = {};
-implementors["aero_kernel"] = [{"text":"impl GlobalAlloc for <a class=\"struct\" href=\"aero_kernel/mem/alloc/struct.LockedHeap.html\" title=\"struct aero_kernel::mem::alloc::LockedHeap\">LockedHeap</a>","synthetic":false,"types":["aero_kernel::mem::alloc::LockedHeap"]}];
-if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

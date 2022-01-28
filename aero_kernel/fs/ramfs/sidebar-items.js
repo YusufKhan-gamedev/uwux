@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["LockedRamINode",""],["RamFs","Implementation of in-memory filesystem. (See the module-level documentation for more information)."],["RamINode",""]]});
