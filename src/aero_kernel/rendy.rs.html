@@ -1018,6 +1018,18 @@
 <span id="1013">1013</span>
 <span id="1014">1014</span>
 <span id="1015">1015</span>
+<span id="1016">1016</span>
+<span id="1017">1017</span>
+<span id="1018">1018</span>
+<span id="1019">1019</span>
+<span id="1020">1020</span>
+<span id="1021">1021</span>
+<span id="1022">1022</span>
+<span id="1023">1023</span>
+<span id="1024">1024</span>
+<span id="1025">1025</span>
+<span id="1026">1026</span>
+<span id="1027">1027</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -1074,6 +1086,8 @@
 <span class="kw">const</span> <span class="ident">DEFAULT_FONT_HEIGHT</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">16</span>;
 
 <span class="kw">const</span> <span class="ident">DEFAULT_MARGIN</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">64</span> <span class="op">/</span> <span class="number">2</span>;
+
+<span class="kw">const</span> <span class="ident">TAB_SIZE</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">4</span>;
 
 <span class="doccomment">/// The amount of VGA font glyphs.</span>
 <span class="kw">const</span> <span class="ident">VGA_FONT_GLYPHS</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">256</span>;
@@ -1743,6 +1757,16 @@
     <span class="kw">fn</span> <span class="ident">write_character</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">char</span>: <span class="ident">char</span>) {
         <span class="kw">match</span> <span class="ident">char</span> {
             <span class="string">&#39;\n&#39;</span> =&gt; <span class="self">self</span>.<span class="ident">newline</span>(),
+
+            <span class="string">&#39;\t&#39;</span> =&gt; {
+                <span class="kw">if</span> (<span class="self">self</span>.<span class="ident">x_pos</span> <span class="op">/</span> <span class="ident">TAB_SIZE</span> <span class="op">+</span> <span class="number">1</span>) <span class="op">&gt;</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">cols</span> {
+                    <span class="self">self</span>.<span class="ident">set_cursor_position</span>(<span class="self">self</span>.<span class="ident">cols</span> <span class="op">-</span> <span class="number">1</span>, <span class="self">self</span>.<span class="ident">y_pos</span>);
+                    <span class="kw">return</span>;
+                }
+
+                <span class="self">self</span>.<span class="ident">set_cursor_position</span>((<span class="self">self</span>.<span class="ident">x_pos</span> <span class="op">/</span> <span class="ident">TAB_SIZE</span> <span class="op">+</span> <span class="number">1</span>) <span class="op">*</span> <span class="ident">TAB_SIZE</span>, <span class="self">self</span>.<span class="ident">y_pos</span>);
+            }
+
             <span class="string">&#39;\r&#39;</span> =&gt; {}
 
             <span class="kw">_</span> =&gt; {
@@ -2034,5 +2058,5 @@
     <span class="ident">DEBUG_RENDY</span>.<span class="ident">call_once</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">Mutex::new</span>(<span class="ident">rendy</span>));
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (21b4a9cfd 2022-01-27)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (a00e130da 2022-01-29)" ></div>
 </body></html>
