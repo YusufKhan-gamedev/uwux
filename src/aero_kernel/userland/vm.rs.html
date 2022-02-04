@@ -844,6 +844,17 @@
 <span id="839">839</span>
 <span id="840">840</span>
 <span id="841">841</span>
+<span id="842">842</span>
+<span id="843">843</span>
+<span id="844">844</span>
+<span id="845">845</span>
+<span id="846">846</span>
+<span id="847">847</span>
+<span id="848">848</span>
+<span id="849">849</span>
+<span id="850">850</span>
+<span id="851">851</span>
+<span id="852">852</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -874,6 +885,7 @@
 <span class="kw">use</span> <span class="ident">xmas_elf::header</span>;
 <span class="kw">use</span> <span class="ident">xmas_elf::ElfFile</span>;
 
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::arch::task::userland_last_address</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::fs</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::fs::cache::DirCacheItem</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::mem::paging</span>::<span class="kw-2">*</span>;
@@ -982,7 +994,6 @@
             <span class="self">self</span>.<span class="ident">handle_cow</span>(<span class="ident">offset_table</span>, <span class="ident">addr_aligned</span>, <span class="bool-val">false</span>)
         } <span class="kw">else</span> {
             <span class="macro">log::error!</span>(<span class="string">&quot;    - present page read failed&quot;</span>);
-
             <span class="bool-val">false</span>
         }
     }
@@ -990,7 +1001,7 @@
     <span class="doccomment">/// Handler routine for pages backed by a file. This function will allocate a frame and</span>
     <span class="doccomment">/// read a page-sized amount from the disk into the allocated frame. Then it maps</span>
     <span class="doccomment">/// the allocated frame at the faulted address.</span>
-    <span class="kw">fn</span> <span class="ident">handle_pf_private_file</span>(
+    <span class="kw">fn</span> <span class="ident">handle_pf_file</span>(
         <span class="kw-2">&amp;mut</span> <span class="self">self</span>,
         <span class="ident">offset_table</span>: <span class="kw-2">&amp;mut</span> <span class="ident">OffsetPageTable</span>,
         <span class="ident">reason</span>: <span class="ident">PageFaultErrorCode</span>,
@@ -1008,9 +1019,7 @@
                 <span class="ident">mmap_file</span>.<span class="ident">size</span> <span class="kw">as</span> <span class="ident">u64</span> <span class="op">-</span> (<span class="ident">address</span> <span class="op">-</span> <span class="self">self</span>.<span class="ident">start_addr</span>),
             );
 
-            <span class="kw">if</span> <span class="op">!</span><span class="ident">reason</span>.<span class="ident">contains</span>(<span class="ident">PageFaultErrorCode::CAUSED_BY_WRITE</span>)
-                <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="ident">reason</span>.<span class="ident">contains</span>(<span class="ident">PageFaultErrorCode::PROTECTION_VIOLATION</span>)
-            {
+            <span class="kw">if</span> <span class="op">!</span><span class="ident">reason</span>.<span class="ident">contains</span>(<span class="ident">PageFaultErrorCode::PROTECTION_VIOLATION</span>) {
                 <span class="comment">// We are writing to private file mapping so copy the content of the page.</span>
                 <span class="macro">log::trace!</span>(
                     <span class="string">&quot;    - private file R: {:?}..{:?} (offset={:#x})&quot;</span>,
@@ -1019,48 +1028,32 @@
                     <span class="ident">offset</span>
                 );
 
-                <span class="kw">let</span> <span class="ident">frame</span>: <span class="ident">PhysFrame</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">FRAME_ALLOCATOR</span>.<span class="ident">allocate_frame</span>() }
-                    .<span class="ident">expect</span>(<span class="string">&quot;failed to allocate frame for a private file read&quot;</span>);
-
-                <span class="kw">let</span> <span class="ident">buffer</span> <span class="op">=</span> <span class="kw">unsafe</span> {
-                    <span class="kw">let</span> <span class="ident">phys</span> <span class="op">=</span> <span class="ident">frame</span>.<span class="ident">start_address</span>().<span class="ident">as_u64</span>();
-                    <span class="kw">let</span> <span class="ident">virt</span> <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::PHYSICAL_MEMORY_OFFSET</span> <span class="op">+</span> <span class="ident">phys</span>;
-                    <span class="kw">let</span> <span class="ident">ptr</span> <span class="op">=</span> <span class="ident">virt</span>.<span class="ident">as_mut_ptr</span>::<span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>();
-
-                    <span class="ident">core::slice::from_raw_parts_mut</span>(<span class="ident">ptr</span>, <span class="ident">size</span> <span class="kw">as</span> <span class="ident">usize</span>)
-                };
-
-                <span class="ident">mmap_file</span>
+                <span class="kw">let</span> <span class="ident">phys</span> <span class="op">=</span> <span class="ident">mmap_file</span>
                     .<span class="ident">file</span>
                     .<span class="ident">inode</span>()
-                    .<span class="ident">read_at</span>(<span class="ident">offset</span> <span class="kw">as</span> <span class="ident">usize</span>, <span class="ident">buffer</span>)
-                    .<span class="ident">unwrap</span>();
+                    .<span class="ident">mmap</span>(<span class="ident">offset</span> <span class="kw">as</span> <span class="ident">usize</span>, <span class="self">self</span>.<span class="ident">flags</span>)
+                    .<span class="ident">expect</span>(<span class="string">&quot;handle_pf_file: file does not support mmap&quot;</span>);
 
-                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">flags</span> <span class="op">=</span> <span class="ident">PageTableFlags::PRESENT</span>
-                    <span class="op">|</span> <span class="ident">PageTableFlags::USER_ACCESSIBLE</span>
-                    <span class="op">|</span> <span class="self">self</span>.<span class="ident">protection</span>.<span class="ident">into</span>();
-
-                <span class="comment">// We want to remove the writable flag since, we want to share the page table</span>
-                <span class="comment">// entry with other processes or threads until it tries to write to the same page</span>
-                <span class="comment">// and the mapping is marked as writable, in that case we will copy the page table</span>
-                <span class="comment">// entry.</span>
-                <span class="ident">flags</span>.<span class="ident">remove</span>(<span class="ident">PageTableFlags::WRITABLE</span>);
+                <span class="kw">let</span> <span class="ident">frame</span>: <span class="ident">PhysFrame</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">PhysFrame::containing_address</span>(<span class="ident">phys</span>);
 
                 <span class="kw">unsafe</span> {
                     <span class="ident">offset_table</span>.<span class="ident">map_to</span>(
                         <span class="ident">Page::containing_address</span>(<span class="ident">address</span>),
                         <span class="ident">frame</span>,
-                        <span class="ident">flags</span>,
+                        <span class="ident">PageTableFlags::PRESENT</span>
+                            <span class="op">|</span> <span class="ident">PageTableFlags::USER_ACCESSIBLE</span>
+                            <span class="op">|</span> <span class="self">self</span>.<span class="ident">protection</span>.<span class="ident">into</span>(),
                         <span class="kw-2">&amp;mut</span> <span class="ident">FRAME_ALLOCATOR</span>,
                     )
                 }
                 .<span class="ident">expect</span>(<span class="string">&quot;failed to map allocated frame for private file read&quot;</span>)
                 .<span class="ident">flush</span>();
-            } <span class="kw">else</span> {
-                <span class="macro">unimplemented!</span>()
-            }
 
-            <span class="bool-val">true</span>
+                <span class="bool-val">true</span>
+            } <span class="kw">else</span> {
+                <span class="macro">log::error!</span>(<span class="string">&quot;    - present page read failed&quot;</span>);
+                <span class="bool-val">false</span>
+            }
         } <span class="kw">else</span> {
             <span class="bool-val">false</span>
         }
@@ -1256,12 +1249,11 @@
                     <span class="ident">map</span>.<span class="ident">handle_pf_private_anon</span>(<span class="kw-2">&amp;mut</span> <span class="ident">offset_table</span>, <span class="ident">reason</span>, <span class="ident">accessed_address</span>)
                 }
 
-                (<span class="bool-val">true</span>, <span class="bool-val">false</span>) =&gt; {
-                    <span class="ident">map</span>.<span class="ident">handle_pf_private_file</span>(<span class="kw-2">&amp;mut</span> <span class="ident">offset_table</span>, <span class="ident">reason</span>, <span class="ident">accessed_address</span>)
+                (<span class="bool-val">true</span>, <span class="bool-val">false</span>) <span class="op">|</span> (<span class="bool-val">false</span>, <span class="bool-val">false</span>) =&gt; {
+                    <span class="ident">map</span>.<span class="ident">handle_pf_file</span>(<span class="kw-2">&amp;mut</span> <span class="ident">offset_table</span>, <span class="ident">reason</span>, <span class="ident">accessed_address</span>)
                 }
 
                 (<span class="bool-val">false</span>, <span class="bool-val">true</span>) =&gt; <span class="macro">unreachable!</span>(<span class="string">&quot;shared and anonymous mapping&quot;</span>),
-                (<span class="bool-val">false</span>, <span class="bool-val">false</span>) =&gt; <span class="macro">unimplemented!</span>(),
             };
 
             <span class="ident">result</span>
@@ -1363,6 +1355,23 @@
             <span class="kw">return</span> <span class="prelude-val">None</span>;
         }
 
+        <span class="kw">if</span> <span class="ident">file</span>.<span class="ident">is_some</span>() {
+            <span class="comment">// SAFTEY: We cannot mmap a file with the anonymous flag.</span>
+            <span class="kw">if</span> <span class="ident">flags</span>.<span class="ident">contains</span>(<span class="ident">MMapFlags::MAP_ANONYOMUS</span>) {
+                <span class="kw">return</span> <span class="prelude-val">None</span>;
+            }
+        } <span class="kw">else</span> {
+            <span class="comment">// SAFTEY: Mappings not backed by a file must be anonymous.</span>
+            <span class="kw">if</span> <span class="op">!</span><span class="ident">flags</span>.<span class="ident">contains</span>(<span class="ident">MMapFlags::MAP_ANONYOMUS</span>) {
+                <span class="kw">return</span> <span class="prelude-val">None</span>;
+            }
+
+            <span class="comment">// SAFTEY: We cannot have a shared and an anonymous mapping.</span>
+            <span class="kw">if</span> <span class="ident">flags</span>.<span class="ident">contains</span>(<span class="ident">MMapFlags::MAP_SHARED</span>) {
+                <span class="kw">return</span> <span class="prelude-val">None</span>;
+            }
+        }
+
         <span class="kw">let</span> <span class="ident">size_aligned</span> <span class="op">=</span> <span class="ident">align_up</span>(<span class="ident">size</span> <span class="kw">as</span> <span class="kw">_</span>, <span class="ident">Size4KiB::SIZE</span>);
 
         <span class="kw">if</span> <span class="ident">address</span> <span class="op">==</span> <span class="ident">VirtAddr::zero</span>() {
@@ -1370,6 +1379,17 @@
             <span class="self">self</span>.<span class="ident">find_any_above</span>(<span class="ident">VirtAddr::new</span>(<span class="number">0x7000_0000_0000</span>), <span class="ident">size_aligned</span> <span class="kw">as</span> <span class="kw">_</span>)
         } <span class="kw">else</span> {
             <span class="kw">if</span> <span class="ident">flags</span>.<span class="ident">contains</span>(<span class="ident">MMapFlags::MAP_FIXED</span>) {
+                <span class="comment">// SAFTEY: The provided address should be page aligned.</span>
+                <span class="kw">if</span> <span class="op">!</span><span class="ident">address</span>.<span class="ident">is_aligned</span>(<span class="ident">Size4KiB::SIZE</span>) {
+                    <span class="kw">return</span> <span class="prelude-val">None</span>;
+                }
+
+                <span class="comment">// SAFTEY: The provided (address + size) should be less then</span>
+                <span class="comment">// the userland max address.</span>
+                <span class="kw">if</span> (<span class="ident">address</span> <span class="op">+</span> <span class="ident">size_aligned</span>) <span class="op">&gt;</span> <span class="ident">userland_last_address</span>() {
+                    <span class="kw">return</span> <span class="prelude-val">None</span>;
+                }
+
                 <span class="self">self</span>.<span class="ident">munmap</span>(<span class="ident">address</span>, <span class="ident">size_aligned</span> <span class="kw">as</span> <span class="ident">usize</span>); <span class="comment">// Unmap any existing mappings.</span>
                 <span class="self">self</span>.<span class="ident">find_fixed_mapping</span>(<span class="ident">address</span>, <span class="ident">size_aligned</span> <span class="kw">as</span> <span class="kw">_</span>)
             } <span class="kw">else</span> {
@@ -1491,10 +1511,12 @@
         <span class="ident">size</span>: <span class="ident">usize</span>,
         <span class="ident">protection</span>: <span class="ident">MMapProt</span>,
         <span class="ident">flags</span>: <span class="ident">MMapFlags</span>,
+        <span class="ident">offset</span>: <span class="ident">usize</span>,
+        <span class="ident">file</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">DirCacheItem</span><span class="op">&gt;</span>,
     ) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">VirtAddr</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">inner</span>
             .<span class="ident">lock</span>()
-            .<span class="ident">mmap</span>(<span class="ident">address</span>, <span class="ident">size</span>, <span class="ident">protection</span>, <span class="ident">flags</span>, <span class="number">0x00</span>, <span class="prelude-val">None</span>)
+            .<span class="ident">mmap</span>(<span class="ident">address</span>, <span class="ident">size</span>, <span class="ident">protection</span>, <span class="ident">flags</span>, <span class="ident">offset</span>, <span class="ident">file</span>)
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">munmap</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">address</span>: <span class="ident">VirtAddr</span>, <span class="ident">size</span>: <span class="ident">usize</span>) -&gt; <span class="ident">bool</span> {
@@ -1608,8 +1630,8 @@
                         <span class="ident">size</span>,
                         <span class="ident">prot</span>,
                         <span class="ident">MMapFlags::MAP_PRIVATE</span> <span class="op">|</span> <span class="ident">MMapFlags::MAP_FIXED</span> <span class="op">|</span> <span class="ident">MMapFlags::MAP_ANONYOMUS</span>,
-                        <span class="ident">file_offset</span> <span class="kw">as</span> <span class="ident">usize</span>,
-                        <span class="prelude-val">Some</span>(<span class="ident">bin</span>.<span class="ident">clone</span>()),
+                        <span class="number">0</span>,
+                        <span class="prelude-val">None</span>,
                     )
                     .<span class="ident">expect</span>(<span class="string">&quot;load_bin: failed to memory map ELF header&quot;</span>);
 
@@ -1686,5 +1708,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (498eeb72f 2022-01-31)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (4e8fb743c 2022-02-03)" ></div>
 </body></html>

@@ -827,10 +827,6 @@
 <span id="822">822</span>
 <span id="823">823</span>
 <span id="824">824</span>
-<span id="825">825</span>
-<span id="826">826</span>
-<span id="827">827</span>
-<span id="828">828</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -1098,7 +1094,7 @@
                 <span class="kw">let</span> (<span class="ident">rows</span>, <span class="ident">cols</span>) <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::rendy::get_rows_cols</span>();
 
                 <span class="ident">winsize</span>.<span class="ident">ws_row</span> <span class="op">=</span> <span class="ident">rows</span> <span class="kw">as</span> <span class="ident">u16</span>;
-                <span class="ident">winsize</span>.<span class="ident">ws_col</span> <span class="op">=</span> (<span class="ident">cols</span> <span class="kw">as</span> <span class="ident">u16</span>) <span class="op">-</span> (<span class="ident"><span class="kw">crate</span>::rendy::X_PAD</span> <span class="op">*</span> <span class="number">2</span>) <span class="kw">as</span> <span class="ident">u16</span>;
+                <span class="ident">winsize</span>.<span class="ident">ws_col</span> <span class="op">=</span> <span class="ident">cols</span> <span class="kw">as</span> <span class="ident">u16</span>;
 
                 <span class="kw">let</span> (<span class="ident">xpixel</span>, <span class="ident">ypixel</span>) <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::rendy::get_resolution</span>();
 
@@ -1442,8 +1438,6 @@
                         <span class="kw">let</span> (<span class="ident">x</span>, <span class="ident">y</span>) <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::rendy::get_cursor_position</span>();
                         <span class="kw">let</span> (<span class="ident">term_rows</span>, <span class="ident">term_cols</span>) <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::rendy::get_rows_cols</span>();
 
-                        <span class="kw">let</span> <span class="ident">term_cols</span> <span class="op">=</span> <span class="ident">term_cols</span> <span class="op">-</span> (<span class="ident"><span class="kw">crate</span>::rendy::X_PAD</span> <span class="op">*</span> <span class="number">2</span>);
-
                         <span class="kw">let</span> <span class="ident">rows_remaining</span> <span class="op">=</span> <span class="ident">term_rows</span> <span class="op">-</span> (<span class="ident">y</span> <span class="op">+</span> <span class="number">1</span>);
                         <span class="kw">let</span> <span class="ident">cols_diff</span> <span class="op">=</span> <span class="ident">term_cols</span> <span class="op">-</span> (<span class="ident">x</span> <span class="op">+</span> <span class="number">1</span>);
                         <span class="kw">let</span> <span class="ident">to_clear</span> <span class="op">=</span> <span class="ident">rows_remaining</span> <span class="op">*</span> <span class="ident">term_cols</span> <span class="op">+</span> <span class="ident">cols_diff</span>;
@@ -1480,8 +1474,6 @@
 
                 <span class="kw">let</span> (<span class="ident">x</span>, <span class="ident">y</span>) <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::rendy::get_cursor_position</span>();
                 <span class="kw">let</span> (<span class="kw">_</span>, <span class="ident">term_cols</span>) <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::rendy::get_rows_cols</span>();
-
-                <span class="kw">let</span> <span class="ident">term_cols</span> <span class="op">=</span> <span class="ident">term_cols</span> <span class="op">-</span> (<span class="ident"><span class="kw">crate</span>::rendy::X_PAD</span> <span class="op">*</span> <span class="number">2</span>);
 
                 <span class="kw">if</span> <span class="ident">x</span> <span class="op">+</span> <span class="ident">n</span> <span class="op">&gt;</span> <span class="ident">term_cols</span> <span class="op">-</span> <span class="number">1</span> {
                     <span class="ident">n</span> <span class="op">=</span> (<span class="ident">term_cols</span> <span class="op">-</span> <span class="number">1</span>) <span class="op">-</span> <span class="ident">x</span>;
@@ -1660,5 +1652,5 @@
 
 <span class="macro">crate::module_init!</span>(<span class="ident">init_tty</span>);
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (498eeb72f 2022-01-31)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (4e8fb743c 2022-02-03)" ></div>
 </body></html>

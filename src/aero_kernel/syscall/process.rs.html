@@ -324,6 +324,8 @@
 <span id="319">319</span>
 <span id="320">320</span>
 <span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -511,26 +513,28 @@
     <span class="ident">fd</span>: <span class="ident">usize</span>,
     <span class="ident">offset</span>: <span class="ident">usize</span>,
 ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">AeroSyscallError</span><span class="op">&gt;</span> {
-    <span class="macro">assert_eq!</span>(<span class="ident">offset</span> <span class="kw">as</span> <span class="ident">isize</span>, <span class="number">0</span>);
-    <span class="macro">assert_eq!</span>(<span class="ident">fd</span> <span class="kw">as</span> <span class="ident">isize</span>, <span class="op">-</span><span class="number">1</span>);
-
     <span class="kw">let</span> <span class="ident">address</span> <span class="op">=</span> <span class="ident">VirtAddr::new</span>(<span class="ident">address</span> <span class="kw">as</span> <span class="ident">u64</span>);
 
     <span class="kw">let</span> <span class="ident">protection</span> <span class="op">=</span> <span class="ident">MMapProt::from_bits</span>(<span class="ident">protection</span>).<span class="ident">ok_or</span>(<span class="ident">AeroSyscallError::EINVAL</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> <span class="ident">flags</span> <span class="op">=</span> <span class="ident">MMapFlags::from_bits</span>(<span class="ident">flags</span>).<span class="ident">ok_or</span>(<span class="ident">AeroSyscallError::EINVAL</span>)<span class="question-mark">?</span>;
 
-    <span class="kw">if</span> <span class="op">!</span><span class="ident">flags</span>.<span class="ident">contains</span>(<span class="ident">MMapFlags::MAP_ANONYOMUS</span>) {
-        <span class="macro">unimplemented!</span>()
-    }
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">file</span> <span class="op">=</span> <span class="prelude-val">None</span>;
 
-    <span class="comment">// HACK: This is currently a hack since mlibc tries to do somethin</span>
-    <span class="comment">// fancy. Oh well andy plz fix this in the future.</span>
-    <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="ident">size</span> <span class="op">+</span> <span class="number">4096</span>;
+    <span class="kw">if</span> <span class="ident">fd</span> <span class="kw">as</span> <span class="ident">isize</span> <span class="op">!</span><span class="op">=</span> <span class="op">-</span><span class="number">1</span> {
+        <span class="ident">file</span> <span class="op">=</span> <span class="prelude-val">Some</span>(
+            <span class="ident">scheduler::get_scheduler</span>()
+                .<span class="ident">current_task</span>()
+                .<span class="ident">file_table</span>
+                .<span class="ident">get_handle</span>(<span class="ident">fd</span>)
+                .<span class="ident">ok_or</span>(<span class="ident">AeroSyscallError::EBADF</span>)<span class="question-mark">?</span>
+                .<span class="ident">dirnode</span>(),
+        );
+    }
 
     <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">alloc</span>) <span class="op">=</span> <span class="ident">scheduler::get_scheduler</span>()
         .<span class="ident">current_task</span>()
         .<span class="ident">vm</span>()
-        .<span class="ident">mmap</span>(<span class="ident">address</span>, <span class="ident">size</span>, <span class="ident">protection</span>, <span class="ident">flags</span>)
+        .<span class="ident">mmap</span>(<span class="ident">address</span>, <span class="ident">size</span>, <span class="ident">protection</span>, <span class="ident">flags</span>, <span class="ident">offset</span>, <span class="ident">file</span>)
     {
         <span class="prelude-val">Ok</span>(<span class="ident">alloc</span>.<span class="ident">as_u64</span>() <span class="kw">as</span> <span class="ident">usize</span>)
     } <span class="kw">else</span> {
@@ -646,5 +650,5 @@
     <span class="kw">loop</span> {}
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (498eeb72f 2022-01-31)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (4e8fb743c 2022-02-03)" ></div>
 </body></html>

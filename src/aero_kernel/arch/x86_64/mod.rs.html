@@ -413,10 +413,10 @@
     <span class="ident">gdt::init_boot</span>();
     <span class="macro">log::info!</span>(<span class="string">&quot;loaded bootstrap GDT&quot;</span>);
 
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">offset_table</span> <span class="op">=</span> <span class="ident">paging::init</span>(<span class="ident">mmap_tag</span>).<span class="ident">unwrap</span>();
+    <span class="ident">paging::init</span>(<span class="ident">mmap_tag</span>).<span class="ident">unwrap</span>();
     <span class="macro">log::info!</span>(<span class="string">&quot;loaded paging&quot;</span>);
 
-    <span class="ident">alloc::init_heap</span>(<span class="kw-2">&amp;mut</span> <span class="ident">offset_table</span>).<span class="ident">expect</span>(<span class="string">&quot;failed to initialize the kernel heap&quot;</span>);
+    <span class="ident">alloc::init_heap</span>();
     <span class="macro">log::info!</span>(<span class="string">&quot;loaded heap&quot;</span>);
 
     <span class="ident">paging::init_vm_frames</span>();
@@ -480,5 +480,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (498eeb72f 2022-01-31)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (4e8fb743c 2022-02-03)" ></div>
 </body></html>

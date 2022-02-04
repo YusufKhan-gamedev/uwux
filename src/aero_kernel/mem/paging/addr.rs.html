@@ -525,6 +525,28 @@
 <span id="520">520</span>
 <span id="521">521</span>
 <span id="522">522</span>
+<span id="523">523</span>
+<span id="524">524</span>
+<span id="525">525</span>
+<span id="526">526</span>
+<span id="527">527</span>
+<span id="528">528</span>
+<span id="529">529</span>
+<span id="530">530</span>
+<span id="531">531</span>
+<span id="532">532</span>
+<span id="533">533</span>
+<span id="534">534</span>
+<span id="535">535</span>
+<span id="536">536</span>
+<span id="537">537</span>
+<span id="538">538</span>
+<span id="539">539</span>
+<span id="540">540</span>
+<span id="541">541</span>
+<span id="542">542</span>
+<span id="543">543</span>
+<span id="544">544</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -630,6 +652,13 @@
         <span class="ident">U</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>,
     {
         <span class="ident">VirtAddr</span>(<span class="ident">align_down</span>(<span class="self">self</span>.<span class="number">0</span>, <span class="ident">align</span>.<span class="ident">into</span>()))
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_aligned</span><span class="op">&lt;</span><span class="ident">U</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">align</span>: <span class="ident">U</span>) -&gt; <span class="ident">bool</span>
+    <span class="kw">where</span>
+        <span class="ident">U</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>,
+    {
+        <span class="ident">is_aligned</span>(<span class="self">self</span>.<span class="number">0</span>, <span class="ident">align</span>.<span class="ident">into</span>())
     }
 
     <span class="doccomment">/// Aligns the virtual address upwards to the given alignment.</span>
@@ -841,6 +870,10 @@
         <span class="kw">unsafe</span> { <span class="ident">PhysAddr::new_unchecked</span>(<span class="ident">addr</span>) }
     }
 
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">zero</span>() -&gt; <span class="self">Self</span> {
+        <span class="kw">unsafe</span> { <span class="ident"><span class="self">Self</span>::new_unchecked</span>(<span class="number">0</span>) }
+    }
+
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_vm_frame</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">VmFrame</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">frames</span> <span class="op">=</span> <span class="ident"><span class="kw">super</span>::get_vm_frames</span>();
 
@@ -1024,9 +1057,20 @@
     }
 }
 
+<span class="attribute">#[<span class="ident">inline</span>]</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_aligned</span>(<span class="ident">addr</span>: <span class="ident">u64</span>, <span class="ident">align</span>: <span class="ident">u64</span>) -&gt; <span class="ident">bool</span> {
+    <span class="ident">align_up</span>(<span class="ident">addr</span>, <span class="ident">align</span>) <span class="op">==</span> <span class="ident">addr</span>
+}
+
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">tests</span> {
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+
+    <span class="attribute">#[<span class="ident">aero_test::test</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">test_is_aligned</span>() {
+        <span class="macro">assert!</span>(<span class="ident">is_aligned</span>(<span class="number">0x1000</span>, <span class="number">0x1000</span>));
+        <span class="macro">assert!</span>(<span class="op">!</span><span class="ident">is_aligned</span>(<span class="number">69</span>, <span class="number">0x1000</span>));
+    }
 
     <span class="attribute">#[<span class="ident">aero_test::test</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">test_align_up</span>() {
@@ -1048,5 +1092,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (498eeb72f 2022-01-31)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (4e8fb743c 2022-02-03)" ></div>
 </body></html>
