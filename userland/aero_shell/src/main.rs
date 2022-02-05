@@ -17,7 +17,11 @@
  * along with Aero. If not, see <https://www.gnu.org/licenses/>.
  */
 
+extern crate alloc;
 
+use core::sync::atomic::{AtomicU32, Ordering};
+
+use aero_syscall::signal::*;
 use aero_syscall::*;
 
 const MAGENTA_FG: &str = "\x1b[1;35m";
@@ -31,6 +35,8 @@ macro_rules! error {
         std::print!("\x1b[1;31merror\x1b[0m: {}\n", format_args!($($arg)*))
     }
 }
+
+static LAST_EXIT_CODE: AtomicU32 = AtomicU32::new(0);
 
 fn repl(history: &mut Vec<String>) -> Result<(), AeroSyscallError> {
     let mut hostname_buf = [0; 64];
@@ -62,7 +68,13 @@ fn repl(history: &mut Vec<String>) -> Result<(), AeroSyscallError> {
             "pwd" => println!("{}", pwd),
             "cd" => {
                 sys_chdir(args.next().unwrap_or(".."))?;
-            }
+            },
+            "rmdir" => match args.next() {
+                Some(path) => {
+                    sys_rmdir(path)?;
+                }
+                None => error!("rmdir: missing operand"),
+            },
             "exit" => match args.next() {
                 Some(status) => match status.parse::<usize>() {
                     Ok(exit_code) => sys_exit(exit_code),
@@ -70,6 +82,7 @@ fn repl(history: &mut Vec<String>) -> Result<(), AeroSyscallError> {
                 },
                 None => sys_exit(0),
             },
+            "cat" => cat_file(args.next())?,
             "clear" => print!("{esc}[2J{esc}[1;1H", esc = 27 as char),
             "dmsg" => print_kernel_log()?,
             "uwufetch" => uwufetch()?,
@@ -84,37 +97,6 @@ fn repl(history: &mut Vec<String>) -> Result<(), AeroSyscallError> {
                 // TODO: Make a uwutest program that is executed by the kernel
                 // if the test kernel is built instead of randomly bloating the shell
                 // with tests :).
-
-                // let mut pipe = [0usize; 2];
-                // sys_pipe(&mut pipe, OpenFlags::empty())?;
-
-                // let child = sys_fork()?;
-
-                // if child == 0 {
-                //     sys_close(pipe[0])?; // close the read end
-
-                //     let mut buffer = [0; 1024];
-                //     let length = sys_read(0, &mut buffer)?;
-
-                //     sys_write(pipe[1], &buffer[0..length])?;
-
-                //     sys_close(pipe[1])?; // close the write end
-                //     sys_exit(0)
-                // } else {
-                //     let mut status = 0;
-                //     sys_waitpid(child, &mut status, 0)?;
-
-                //     sys_close(pipe[1])?; // close the write end
-
-                //     let mut buffer = [0; 1024];
-                //     let length = sys_read(pipe[0], &mut buffer)?;
-
-                //     println!("{}", unsafe {
-                //         core::str::from_utf8_unchecked(&buffer[0..length])
-                //     });
-
-                //     sys_close(pipe[0])?; // close the read end
-                // }
 
                 // let fb = sys_open("/dev/fb", OpenFlags::O_RDWR)?;
 
@@ -136,14 +118,8 @@ fn repl(history: &mut Vec<String>) -> Result<(), AeroSyscallError> {
             "uptime" => {
                 print!("{}", get_uptime()?);
             }
-            "rmdir" => match args.next() {
-                Some(path) => {
-                    sys_rmdir(path)?;
-                }
-                None => error!("rmdir: missing operand"),
-            },
 
-            _ => {
+            "./"_ => {
                 let child = sys_fork()?;
 
                 if child == 0 {
@@ -155,7 +131,7 @@ fn repl(history: &mut Vec<String>) -> Result<(), AeroSyscallError> {
 
                     let argv = argv.as_slice();
 
-                    match sys_exec(&["/bin/", cmd].join(""), argv, &[]) {
+                    match sys_exec(&["/bin/", cmd].join(""), argv, &["TERM=linux"]) {
                         Ok(_) => core::unreachable!(),
                         Err(AeroSyscallError::EISDIR) => error!("{}: is a directory", cmd),
                         Err(AeroSyscallError::ENOENT) => error!("{}: command not found", cmd),
@@ -169,6 +145,41 @@ fn repl(history: &mut Vec<String>) -> Result<(), AeroSyscallError> {
                     sys_waitpid(child, &mut status, 0)?;
 
                     let exit_code = status & 0xff;
+                    LAST_EXIT_CODE.store(exit_code, Ordering::SeqCst);
+
+                    if exit_code != 0 {
+                        error!("{} exited with a non-zero status code: {} ", cmd, exit_code);
+                    }
+                }
+            }
+
+            _ => {
+                let child = sys_fork()?;
+
+                if child == 0 {
+                    let args = args.collect::<Vec<_>>();
+                    let mut argv = Vec::new();
+
+                    argv.push(cmd);
+                    argv.extend(args);
+
+                    let argv = argv.as_slice();
+
+                    match sys_exec(cmd, argv, &["TERM=linux"]) {
+                        Ok(_) => core::unreachable!(),
+                        Err(AeroSyscallError::EISDIR) => error!("{}: is a directory", cmd),
+                        Err(AeroSyscallError::ENOENT) => error!("{}: command not found", cmd),
+                        Err(err) => error!("{}: {:?}", cmd, err),
+                    }
+
+                    sys_exit(0);
+                } else {
+                    // Wait for the child
+                    let mut status = 0;
+                    sys_waitpid(child, &mut status, 0)?;
+
+                    let exit_code = status & 0xff;
+                    LAST_EXIT_CODE.store(exit_code, Ordering::SeqCst);
 
                     if exit_code != 0 {
                         error!("{} exited with a non-zero status code: {} ", cmd, exit_code);
@@ -390,7 +401,18 @@ fn uname() -> Result<(), AeroSyscallError> {
     Ok(())
 }
 
+fn handle_segmentation_fault(_fault: usize) {
+    error!("segmentation fault");
+    sys_exit(0x1);
+}
+
 fn main() {
+    let handler = SignalHandler::Handle(handle_segmentation_fault);
+    let sigaction = SigAction::new(handler, 0, SignalFlags::empty());
+
+    sys_sigaction(SIGSEGV, Some(&sigaction), None)
+        .expect("failed to install the segmentation fault handler");
+
     let mut history = vec![];
 
     loop {
