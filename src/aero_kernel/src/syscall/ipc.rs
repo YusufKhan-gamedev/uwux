@@ -40,6 +40,25 @@ lazy_static! {
     static ref MESSAGES: Mutex<HashMap<usize, Option<Message>>> = Mutex::new(HashMap::new());
 }
 
+<<<<<<< HEAD
+=======
+fn messagequeue_do_recieve(
+    pidptr: usize,
+    messageptr: usize,
+    messagesiz: usize,
+    msg: Message,
+) -> Result<usize, AeroSyscallError> {
+    let output =
+        validate_slice_mut(messageptr as *mut u8, messagesiz).ok_or(AeroSyscallError::EINVAL)?;
+
+    output[0..msg.data.len()].copy_from_slice(&msg.data);
+
+    unsafe {
+        (pidptr as *mut usize).write(msg.from);
+    }
+    Ok(msg.data.len())
+}
+>>>>>>> e1d5ca76d (aero ipc: first round of review for IPC!)
 pub fn send(pid: usize, message: usize, messagesiz: usize) -> Result<usize, AeroSyscallError> {
     let payload =
         validate_slice_mut(message as *mut u8, messagesiz).ok_or(AeroSyscallError::EINVAL)?;
@@ -74,6 +93,7 @@ pub fn recv(
     if block == 0 {
         // nonblocking read
         let mut msgqueue = MESSAGES.lock();
+<<<<<<< HEAD
         match msgqueue.get(&pid) {
             Some(m) => match m {
                 None => return Err(AeroSyscallError::EAGAIN),
@@ -91,6 +111,28 @@ pub fn recv(
                 // just set it up
                 msgqueue.insert(pid, None);
                 return Err(AeroSyscallError::EAGAIN);
+=======
+        match msgqueue.get_mut(&pid) {
+            Some(m) => {
+                let item = m
+                    .queue
+                    .pop_front()
+                    .expect("empty message queues should always be deleted!");
+                if item.data.len() > messagemax {
+                    m.queue.push_front(item);
+                    return Err(AeroSyscallError::E2BIG)
+                }
+                if m.queue.len() == 0 {
+                    msgqueue
+                        .remove(&pid)
+                        .expect("safety violation: modification of a value behind a mutex!");
+                }
+                return messagequeue_do_recieve(pidptr, messageptr, messagemax, item)
+            }
+            None => {
+                // nope
+                return Err(AeroSyscallError::EAGAIN)
+>>>>>>> e1d5ca76d (aero ipc: first round of review for IPC!)
             }
         }
     }
@@ -102,6 +144,7 @@ pub fn recv(
 
     let mut bqueue = BLOCK_QUEUE
         .block_on(&MESSAGES, |msg| {
+<<<<<<< HEAD
             let mp = msg.get(&pid);
             match mp {
                 Some(Some(_)) => true,
@@ -116,4 +159,33 @@ pub fn recv(
         *(pidptr as *mut usize) = m.from;
     }
     Ok(m.data.len())
+=======
+            let mp = msg.get_mut(&pid);
+            if let Some(mq) = mp {
+                mq.queue.front().is_some()
+            } else {
+                false
+            }
+        })
+        .unwrap();
+
+    let mq = queue_map
+        .get_mut(&pid)
+        .expect("someone else stole our messagequeue!");
+    let msg = mq
+        .queue
+        .pop_front()
+        .expect("someone else stole our message!");
+    if msg.data.len() > messagemax {
+        mq.queue.push_front(msg);
+        Err(AeroSyscallError::E2BIG)
+    } else {
+        if mq.queue.len() == 0 {
+            queue_map
+                .remove(&pid)
+                .expect("safety violation: modification of a value behind a mutex!");
+        }
+        messagequeue_do_recieve(pidptr, messageptr, messagemax, msg)
+    }
+>>>>>>> e1d5ca76d (aero ipc: first round of review for IPC!)
 }

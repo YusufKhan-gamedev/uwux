@@ -54,7 +54,12 @@ impl MessageTransport for SendRecieveTransport {
                     let msgid = usize::deserialize(&mut deser)
                         .expect("message ID not present in the message!");
                     if msgid == (mid << 1) | 1 {
+<<<<<<< HEAD
                         return msg.split_off(8);
+=======
+                        // return the message contents!
+                        return msg.split_off(core::mem::size_of::<usize>());
+>>>>>>> e1d5ca76d (aero ipc: first round of review for IPC!)
                     }
                 }
                 None => {}
