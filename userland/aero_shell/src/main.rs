@@ -26,6 +26,7 @@ use aero_syscall::*;
 
 const MAGENTA_FG: &str = "\x1b[1;35m";
 const RESET: &str = "\x1b[0m";
+const PATH: &str = "/bin/";
 const UWUFETCH_LOGO: &str = r#"
 *insert uwu-chan here*
 "#;
@@ -131,7 +132,7 @@ fn repl(history: &mut Vec<String>) -> Result<(), AeroSyscallError> {
 
                     let argv = argv.as_slice();
 
-                    match sys_exec(&["/bin/", cmd].join(""), argv, &["TERM=linux"]) {
+                    match sys_exec(&[PATH, cmd].join(""), argv, &["TERM=linux"]) {
                         Ok(_) => core::unreachable!(),
                         Err(AeroSyscallError::EISDIR) => error!("{}: is a directory", cmd),
                         Err(AeroSyscallError::ENOENT) => error!("{}: command not found", cmd),
