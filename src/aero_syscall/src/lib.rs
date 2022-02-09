@@ -866,5 +866,8 @@ pub fn sys_ipc_recv<'a>(
             false => 0,
         },
     );
-    isize_as_syscall_result(value as _).map(|size| &mut message[0..size])
+    match isize_as_syscall_result(value as _) {
+        Ok(siz) => Ok(&mut message[0..siz]),
+        Err(e) => Err(e),
+    }
 }
