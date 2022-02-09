@@ -205,6 +205,7 @@
 <span id="200">200</span>
 <span id="201">201</span>
 <span id="202">202</span>
+<span id="203">203</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -291,7 +292,6 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">tests</span>;
 <span class="kw">mod</span> <span class="ident">time</span>;
-<span class="kw">mod</span> <span class="ident">tls</span>;
 <span class="kw">mod</span> <span class="ident">unwind</span>;
 <span class="kw">mod</span> <span class="ident">userland</span>;
 <span class="kw">mod</span> <span class="ident">utils</span>;
@@ -383,6 +383,8 @@
 
 <span class="attribute">#[<span class="ident">no_mangle</span>]</span>
 <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">kernel_ap_startup</span>(<span class="ident">ap_id</span>: <span class="ident">u64</span>, <span class="ident">stack_top_addr</span>: <span class="ident">VirtAddr</span>) -&gt; <span class="op">!</span> {
+    <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::arch::tls</span>;
+
     <span class="macro">log::debug!</span>(<span class="string">&quot;booting CPU {}&quot;</span>, <span class="ident">ap_id</span>);
 
     <span class="ident">arch::gdt::init_boot</span>();
@@ -408,5 +410,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (71226d717 2022-02-04)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (0c292c966 2022-02-08)" ></div>
 </body></html>

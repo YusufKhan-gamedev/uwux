@@ -405,7 +405,7 @@
     <span class="comment">// Get the CPU ID where this panic happened and if PANIC_HOOK_READY is false</span>
     <span class="comment">// then we cannot get the CPU where this panic happened.</span>
     <span class="kw">let</span> <span class="ident">cpu_id</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">PANIC_HOOK_READY</span>.<span class="ident">load</span>(<span class="ident">Ordering::SeqCst</span>) {
-        <span class="ident"><span class="kw">crate</span>::tls::get_cpuid</span>()
+        <span class="ident"><span class="kw">crate</span>::arch::tls::get_cpuid</span>()
     } <span class="kw">else</span> {
         <span class="number">0x00</span>
     };
@@ -466,5 +466,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (71226d717 2022-02-04)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (0c292c966 2022-02-08)" ></div>
 </body></html>

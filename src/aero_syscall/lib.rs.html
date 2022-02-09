@@ -840,6 +840,51 @@
 <span id="835">835</span>
 <span id="836">836</span>
 <span id="837">837</span>
+<span id="838">838</span>
+<span id="839">839</span>
+<span id="840">840</span>
+<span id="841">841</span>
+<span id="842">842</span>
+<span id="843">843</span>
+<span id="844">844</span>
+<span id="845">845</span>
+<span id="846">846</span>
+<span id="847">847</span>
+<span id="848">848</span>
+<span id="849">849</span>
+<span id="850">850</span>
+<span id="851">851</span>
+<span id="852">852</span>
+<span id="853">853</span>
+<span id="854">854</span>
+<span id="855">855</span>
+<span id="856">856</span>
+<span id="857">857</span>
+<span id="858">858</span>
+<span id="859">859</span>
+<span id="860">860</span>
+<span id="861">861</span>
+<span id="862">862</span>
+<span id="863">863</span>
+<span id="864">864</span>
+<span id="865">865</span>
+<span id="866">866</span>
+<span id="867">867</span>
+<span id="868">868</span>
+<span id="869">869</span>
+<span id="870">870</span>
+<span id="871">871</span>
+<span id="872">872</span>
+<span id="873">873</span>
+<span id="874">874</span>
+<span id="875">875</span>
+<span id="876">876</span>
+<span id="877">877</span>
+<span id="878">878</span>
+<span id="879">879</span>
+<span id="880">880</span>
+<span id="881">881</span>
+<span id="882">882</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -1056,6 +1101,11 @@
         <span class="ident">prelude::SYS_DUP</span> =&gt; <span class="string">&quot;dup&quot;</span>,
         <span class="ident">prelude::SYS_FCNTL</span> =&gt; <span class="string">&quot;fcntl&quot;</span>,
         <span class="ident">prelude::SYS_DUP2</span> =&gt; <span class="string">&quot;dup2&quot;</span>,
+        <span class="ident">prelude::SYS_IPC_SEND</span> =&gt; <span class="string">&quot;ipc_send&quot;</span>,
+        <span class="ident">prelude::SYS_IPC_RECV</span> =&gt; <span class="string">&quot;ipc_recv&quot;</span>,
+        <span class="ident">prelude::SYS_IPC_DISCOVER_ROOT</span> =&gt; <span class="string">&quot;ipc_discover_root&quot;</span>,
+        <span class="ident">prelude::SYS_IPC_BECOME_ROOT</span> =&gt; <span class="string">&quot;ipc_become_root&quot;</span>,
+        <span class="ident">prelude::SYS_TELL</span> =&gt; <span class="string">&quot;tell&quot;</span>,
 
         <span class="kw">_</span> =&gt; <span class="macro">unreachable!</span>(<span class="string">&quot;unknown syscall&quot;</span>),
     }
@@ -1596,6 +1646,11 @@
     <span class="ident">isize_as_syscall_result</span>(<span class="ident">value</span> <span class="kw">as</span> <span class="kw">_</span>)
 }
 
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">sys_tell</span>(<span class="ident">fd</span>: <span class="ident">usize</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">AeroSyscallError</span><span class="op">&gt;</span> {
+    <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">syscall1</span>(<span class="ident">prelude::SYS_TELL</span>, <span class="ident">fd</span>);
+    <span class="ident">isize_as_syscall_result</span>(<span class="ident">value</span> <span class="kw">as</span> <span class="kw">_</span>)
+}
+
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">sys_sleep</span>(<span class="ident">timespec</span>: <span class="kw-2">&amp;</span><span class="ident">TimeSpec</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">AeroSyscallError</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">syscall1</span>(<span class="ident">prelude::SYS_SLEEP</span>, <span class="ident">timespec</span> <span class="kw">as</span> <span class="kw-2">*const</span> <span class="kw">_</span> <span class="kw">as</span> <span class="ident">usize</span>);
     <span class="ident">isize_as_syscall_result</span>(<span class="ident">value</span> <span class="kw">as</span> <span class="kw">_</span>)
@@ -1677,6 +1732,41 @@
     <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">syscall3</span>(<span class="ident">prelude::SYS_DUP2</span>, <span class="ident">fd</span>, <span class="ident">new_fd</span>, <span class="ident">flags</span>.<span class="ident">bits</span>());
     <span class="ident">isize_as_syscall_result</span>(<span class="ident">value</span> <span class="kw">as</span> <span class="kw">_</span>)
 }
+
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">sys_ipc_send</span>(<span class="ident">pid</span>: <span class="ident">usize</span>, <span class="ident">message</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">AeroSyscallError</span><span class="op">&gt;</span> {
+    <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">syscall3</span>(
+        <span class="ident">prelude::SYS_IPC_SEND</span>,
+        <span class="ident">pid</span>,
+        <span class="ident">message</span>.<span class="ident">as_ptr</span>() <span class="kw">as</span> <span class="ident">usize</span>,
+        <span class="ident">message</span>.<span class="ident">len</span>(),
+    );
+    <span class="ident">isize_as_syscall_result</span>(<span class="ident">value</span> <span class="kw">as</span> <span class="kw">_</span>).<span class="ident">map</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> ())
+}
+
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">sys_ipc_recv</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(
+    <span class="ident">pid</span>: <span class="kw-2">&amp;mut</span> <span class="ident">usize</span>,
+    <span class="ident">message</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> [<span class="ident">u8</span>],
+    <span class="ident">block</span>: <span class="ident">bool</span>,
+) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> [<span class="ident">u8</span>], <span class="ident">AeroSyscallError</span><span class="op">&gt;</span> {
+    <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">syscall4</span>(
+        <span class="ident">prelude::SYS_IPC_RECV</span>,
+        <span class="ident">pid</span> <span class="kw">as</span> <span class="kw-2">*mut</span> <span class="ident">usize</span> <span class="kw">as</span> <span class="ident">usize</span>,
+        <span class="ident">message</span>.<span class="ident">as_ptr</span>() <span class="kw">as</span> <span class="ident">usize</span>,
+        <span class="ident">message</span>.<span class="ident">len</span>(),
+        <span class="ident">block</span> <span class="kw">as</span> <span class="ident">usize</span>,
+    );
+    <span class="ident">isize_as_syscall_result</span>(<span class="ident">value</span> <span class="kw">as</span> <span class="kw">_</span>).<span class="ident">map</span>(<span class="op">|</span><span class="ident">size</span><span class="op">|</span> <span class="kw-2">&amp;mut</span> <span class="ident">message</span>[<span class="number">0</span>..<span class="ident">size</span>])
+}
+
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">sys_ipc_discover_root</span>() -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">AeroSyscallError</span><span class="op">&gt;</span> {
+    <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">syscall0</span>(<span class="ident">prelude::SYS_IPC_DISCOVER_ROOT</span>);
+    <span class="ident">isize_as_syscall_result</span>(<span class="ident">value</span> <span class="kw">as</span> <span class="kw">_</span>)
+}
+
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">sys_ipc_become_root</span>() -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">AeroSyscallError</span><span class="op">&gt;</span> {
+    <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">syscall0</span>(<span class="ident">prelude::SYS_IPC_BECOME_ROOT</span>);
+    <span class="ident">isize_as_syscall_result</span>(<span class="ident">value</span> <span class="kw">as</span> <span class="kw">_</span>).<span class="ident">map</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> ())
+}
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_syscall" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (71226d717 2022-02-04)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_syscall" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (0c292c966 2022-02-08)" ></div>
 </body></html>

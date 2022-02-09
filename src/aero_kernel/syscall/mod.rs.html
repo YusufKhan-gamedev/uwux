@@ -306,6 +306,14 @@
 <span id="301">301</span>
 <span id="302">302</span>
 <span id="303">303</span>
+<span id="304">304</span>
+<span id="305">305</span>
+<span id="306">306</span>
+<span id="307">307</span>
+<span id="308">308</span>
+<span id="309">309</span>
+<span id="310">310</span>
+<span id="311">311</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -370,6 +378,7 @@
 <span class="kw">use</span> <span class="ident">aero_syscall::prelude</span>::<span class="kw-2">*</span>;
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">fs</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">ipc</span>;
 <span class="kw">mod</span> <span class="ident">net</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">process</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">time</span>;
@@ -378,6 +387,7 @@
 <span class="kw">use</span> <span class="ident">alloc::vec::Vec</span>;
 
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">fs</span>::<span class="kw-2">*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">ipc</span>::<span class="kw-2">*</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">process</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">raw_cpuid::CpuId</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">time</span>::<span class="kw-2">*</span>;
@@ -515,6 +525,7 @@
         <span class="ident">SYS_RMDIR</span> =&gt; <span class="ident">fs::rmdir</span>(<span class="ident">b</span>, <span class="ident">c</span>),
         <span class="ident">SYS_IOCTL</span> =&gt; <span class="ident">fs::ioctl</span>(<span class="ident">b</span>, <span class="ident">c</span>, <span class="ident">d</span>),
         <span class="ident">SYS_SEEK</span> =&gt; <span class="ident">fs::seek</span>(<span class="ident">b</span>, <span class="ident">c</span>, <span class="ident">d</span>),
+        <span class="ident">SYS_TELL</span> =&gt; <span class="ident">fs::tell</span>(<span class="ident">b</span>),
         <span class="ident">SYS_ACCESS</span> =&gt; <span class="ident">fs::access</span>(<span class="ident">b</span>, <span class="ident">c</span>, <span class="ident">d</span>, <span class="ident">e</span>, <span class="ident">f</span>),
         <span class="ident">SYS_PIPE</span> =&gt; <span class="ident">fs::pipe</span>(<span class="ident">b</span>, <span class="ident">c</span>),
         <span class="ident">SYS_UNLINK</span> =&gt; <span class="ident">fs::unlink</span>(<span class="ident">b</span>, <span class="ident">c</span>, <span class="ident">d</span>, <span class="ident">e</span>),
@@ -527,6 +538,11 @@
 
         <span class="ident">SYS_GETTIME</span> =&gt; <span class="ident">time::gettime</span>(<span class="ident">b</span>, <span class="ident">c</span>),
         <span class="ident">SYS_SLEEP</span> =&gt; <span class="ident">time::sleep</span>(<span class="ident">b</span>),
+
+        <span class="ident">SYS_IPC_SEND</span> =&gt; <span class="ident">ipc::send</span>(<span class="ident">b</span>, <span class="ident">c</span>, <span class="ident">d</span>),
+        <span class="ident">SYS_IPC_RECV</span> =&gt; <span class="ident">ipc::recv</span>(<span class="ident">b</span>, <span class="ident">c</span>, <span class="ident">d</span>, <span class="ident">e</span>),
+        <span class="ident">SYS_IPC_DISCOVER_ROOT</span> =&gt; <span class="ident">ipc::discover_root</span>(),
+        <span class="ident">SYS_IPC_BECOME_ROOT</span> =&gt; <span class="ident">ipc::become_root</span>(),
 
         <span class="kw">_</span> =&gt; {
             <span class="macro">log::error!</span>(<span class="string">&quot;invalid syscall: {:#x}&quot;</span>, <span class="ident">a</span>);
@@ -610,5 +626,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (71226d717 2022-02-04)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (0c292c966 2022-02-08)" ></div>
 </body></html>

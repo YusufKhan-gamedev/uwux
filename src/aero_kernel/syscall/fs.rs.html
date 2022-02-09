@@ -367,6 +367,18 @@
 <span id="362">362</span>
 <span id="363">363</span>
 <span id="364">364</span>
+<span id="365">365</span>
+<span id="366">366</span>
+<span id="367">367</span>
+<span id="368">368</span>
+<span id="369">369</span>
+<span id="370">370</span>
+<span id="371">371</span>
+<span id="372">372</span>
+<span id="373">373</span>
+<span id="374">374</span>
+<span id="375">375</span>
+<span id="376">376</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -385,6 +397,8 @@
  * You should have received a copy of the GNU General Public License
  * along with Aero. If not, see &lt;https://www.gnu.org/licenses/&gt;.
  */</span>
+
+<span class="kw">use</span> <span class="ident">core::sync::atomic::Ordering</span>;
 
 <span class="kw">use</span> <span class="ident">aero_syscall::prelude::FdFlags</span>;
 <span class="kw">use</span> <span class="ident">aero_syscall</span>::{<span class="ident">AeroSyscallError</span>, <span class="ident">OpenFlags</span>};
@@ -617,6 +631,16 @@
     <span class="prelude-val">Ok</span>(<span class="ident">handle</span>.<span class="ident">seek</span>(<span class="ident">offset</span> <span class="kw">as</span> <span class="ident">isize</span>, <span class="ident">aero_syscall::SeekWhence::from</span>(<span class="ident">whence</span>))<span class="question-mark">?</span>)
 }
 
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tell</span>(<span class="ident">fd</span>: <span class="ident">usize</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">AeroSyscallError</span><span class="op">&gt;</span> {
+    <span class="kw">let</span> <span class="ident">handle</span> <span class="op">=</span> <span class="ident">scheduler::get_scheduler</span>()
+        .<span class="ident">current_task</span>()
+        .<span class="ident">file_table</span>
+        .<span class="ident">get_handle</span>(<span class="ident">fd</span>)
+        .<span class="ident">ok_or</span>(<span class="ident">AeroSyscallError::EBADFD</span>)<span class="question-mark">?</span>;
+
+    <span class="prelude-val">Ok</span>(<span class="ident">handle</span>.<span class="ident">offset</span>.<span class="ident">load</span>(<span class="ident">Ordering::Relaxed</span>))
+}
+
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">pipe</span>(<span class="ident">fds</span>: <span class="ident">usize</span>, <span class="ident">flags</span>: <span class="ident">usize</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">AeroSyscallError</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">flags</span> <span class="op">=</span> <span class="ident">OpenFlags::from_bits</span>(<span class="ident">flags</span>).<span class="ident">ok_or</span>(<span class="ident">AeroSyscallError::EINVAL</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> <span class="ident">fds</span> <span class="op">=</span> <span class="ident">validate_slice_mut</span>(<span class="ident">fds</span> <span class="kw">as</span> <span class="kw-2">*mut</span> <span class="ident">usize</span>, <span class="number">2</span>).<span class="ident">ok_or</span>(<span class="ident">AeroSyscallError::EINVAL</span>)<span class="question-mark">?</span>;
@@ -732,5 +756,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (71226d717 2022-02-04)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (0c292c966 2022-02-08)" ></div>
 </body></html>

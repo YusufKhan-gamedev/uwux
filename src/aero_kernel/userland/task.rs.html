@@ -510,6 +510,12 @@
 <span id="505">505</span>
 <span id="506">506</span>
 <span id="507">507</span>
+<span id="508">508</span>
+<span id="509">509</span>
+<span id="510">510</span>
+<span id="511">511</span>
+<span id="512">512</span>
+<span id="513">513</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -543,7 +549,7 @@
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::arch::task::ArchTask</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::fs::file_table::FileTable</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::syscall::ExecArgs</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::syscall</span>::{<span class="ident">ExecArgs</span>, <span class="ident">MessageQueue</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils::sync</span>::{<span class="ident">BlockQueue</span>, <span class="ident">Mutex</span>};
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::userland::signals::Signals</span>;
@@ -559,7 +565,7 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">TaskId</span>(<span class="ident">usize</span>);
 
 <span class="kw">impl</span> <span class="ident">TaskId</span> {
-    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">pid</span>: <span class="ident">usize</span>) -&gt; <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">pid</span>: <span class="ident">usize</span>) -&gt; <span class="self">Self</span> {
         <span class="self">Self</span>(<span class="ident">pid</span>)
     }
 
@@ -701,6 +707,8 @@
     <span class="kw">pub</span> <span class="ident">vm</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Vm</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">file_table</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">FileTable</span><span class="op">&gt;</span>,
 
+    <span class="kw">pub</span> <span class="ident">message_queue</span>: <span class="ident">MessageQueue</span>,
+
     <span class="ident">cwd</span>: <span class="ident">RwLock</span><span class="op">&lt;</span><span class="ident">Cwd</span><span class="op">&gt;</span>,
 
     <span class="kw">pub</span>(<span class="kw">super</span>) <span class="ident">exit_status</span>: <span class="ident">AtomicIsize</span>,
@@ -719,6 +727,8 @@
 
             <span class="ident">arch_task</span>: <span class="ident">UnsafeCell::new</span>(<span class="ident">ArchTask::new_idle</span>()),
             <span class="ident">file_table</span>: <span class="ident">Arc::new</span>(<span class="ident">FileTable::new</span>()),
+
+            <span class="ident">message_queue</span>: <span class="ident">MessageQueue::new</span>(),
 
             <span class="ident">tid</span>: <span class="ident">pid</span>.<span class="ident">clone</span>(),
             <span class="ident">pid</span>,
@@ -753,6 +763,7 @@
                 <span class="ident">enable_interrupts</span>,
             )),
             <span class="ident">file_table</span>: <span class="ident">Arc::new</span>(<span class="ident">FileTable::new</span>()),
+            <span class="ident">message_queue</span>: <span class="ident">MessageQueue::new</span>(),
             <span class="ident">vm</span>: <span class="ident">Arc::new</span>(<span class="ident">Vm::new</span>()),
             <span class="ident">state</span>: <span class="ident">AtomicU8::new</span>(<span class="ident">TaskState::Runnable</span> <span class="kw">as</span> <span class="kw">_</span>),
 
@@ -782,6 +793,7 @@
 
             <span class="ident">arch_task</span>,
             <span class="ident">file_table</span>: <span class="ident">Arc::new</span>(<span class="self">self</span>.<span class="ident">file_table</span>.<span class="ident">deep_clone</span>()),
+            <span class="ident">message_queue</span>: <span class="ident">MessageQueue::new</span>(),
             <span class="ident">vm</span>: <span class="ident">Arc::new</span>(<span class="ident">Vm::new</span>()),
             <span class="ident">state</span>: <span class="ident">AtomicU8::new</span>(<span class="ident">TaskState::Runnable</span> <span class="kw">as</span> <span class="kw">_</span>),
 
@@ -1018,5 +1030,5 @@
 <span class="macro">intrusive_collections::intrusive_adapter!</span>(<span class="kw">pub</span> <span class="ident">SchedTaskAdapter</span> <span class="op">=</span> <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Task</span><span class="op">&gt;</span> : <span class="ident">Task</span> { <span class="ident">link</span>: <span class="ident">LinkedListLink</span> });
 <span class="macro">intrusive_collections::intrusive_adapter!</span>(<span class="kw">pub</span> <span class="ident">TaskAdapter</span> <span class="op">=</span> <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Task</span><span class="op">&gt;</span> : <span class="ident">Task</span> { <span class="ident">clink</span>: <span class="ident">LinkedListLink</span> });
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (71226d717 2022-02-04)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (0c292c966 2022-02-08)" ></div>
 </body></html>

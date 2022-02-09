@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["UnmapResult",""]],"struct":[["LoadedBinary",""],["MMapFile",""],["Mapping",""],["Vm",""],["VmProtected",""]]});
+initSidebarItems({"constant":[["ELF_HEADER_MAGIC",""],["ELF_PT1_SIZE",""],["ELF_PT2_64_SIZE",""]],"enum":[["ElfLoadError",""],["UnmapResult",""]],"fn":[["parse_elf_header",""],["parse_program_header",""]],"struct":[["Elf",""],["LoadedBinary",""],["MMapFile",""],["Mapping",""],["ProgramHeaderIter",""],["Vm",""],["VmProtected",""]]});

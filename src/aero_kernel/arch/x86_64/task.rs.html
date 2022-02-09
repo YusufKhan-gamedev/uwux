@@ -424,6 +424,9 @@
 <span id="419">419</span>
 <span id="420">420</span>
 <span id="421">421</span>
+<span id="422">422</span>
+<span id="423">423</span>
+<span id="424">424</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -455,7 +458,7 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::mem::paging</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::syscall</span>::{<span class="ident">ExecArgs</span>, <span class="ident">RegistersFrame</span>, <span class="ident">SyscallFrame</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::userland::vm::Vm</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils</span>::{<span class="ident">io</span>, <span class="ident">StackHelper</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils::StackHelper</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::controlregs</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::gdt::Ring</span>;
@@ -666,8 +669,11 @@
         }
 
         <span class="kw">let</span> <span class="ident">switch_stack</span> <span class="op">=</span> <span class="kw">unsafe</span> {
-            <span class="kw">let</span> <span class="ident">layout</span> <span class="op">=</span> <span class="ident">Layout::from_size_align_unchecked</span>(<span class="number">0x1000</span>, <span class="number">0x1000</span>);
-            <span class="ident">alloc_zeroed</span>(<span class="ident">layout</span>).<span class="ident">add</span>(<span class="ident">layout</span>.<span class="ident">size</span>())
+            <span class="kw">let</span> <span class="ident">frame</span>: <span class="ident">PhysFrame</span> <span class="op">=</span> <span class="ident">FRAME_ALLOCATOR</span>.<span class="ident">allocate_frame</span>().<span class="ident">unwrap</span>();
+            <span class="kw">let</span> <span class="ident">phys</span> <span class="op">=</span> <span class="ident">frame</span>.<span class="ident">start_address</span>();
+            <span class="kw">let</span> <span class="ident">virt</span> <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::PHYSICAL_MEMORY_OFFSET</span> <span class="op">+</span> <span class="ident">phys</span>.<span class="ident">as_u64</span>();
+
+            <span class="ident">virt</span>.<span class="ident">as_mut_ptr</span>::<span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>().<span class="ident">add</span>(<span class="ident">Size4KiB::SIZE</span> <span class="kw">as</span> <span class="ident">usize</span>)
         };
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">old_stack_ptr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">context_switch_rsp</span>.<span class="ident">as_u64</span>();
@@ -746,7 +752,7 @@
 
         <span class="ident">address_space</span>.<span class="ident">switch</span>(); <span class="comment">// Perform the address space switch</span>
 
-        <span class="kw">let</span> <span class="ident">loaded_binary</span> <span class="op">=</span> <span class="ident">vm</span>.<span class="ident">load_bin</span>(<span class="ident">executable</span>);
+        <span class="kw">let</span> <span class="ident">loaded_binary</span> <span class="op">=</span> <span class="ident">vm</span>.<span class="ident">load_bin</span>(<span class="ident">executable</span>).<span class="ident">expect</span>(<span class="string">&quot;exec: failed to load ELF&quot;</span>);
 
         <span class="self">self</span>.<span class="ident">context</span> <span class="op">=</span> <span class="ident">Unique::dangling</span>();
         <span class="self">self</span>.<span class="ident">address_space</span> <span class="op">=</span> <span class="ident">address_space</span>; <span class="comment">// Update the address space reference</span>
@@ -846,5 +852,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (71226d717 2022-02-04)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (0c292c966 2022-02-08)" ></div>
 </body></html>

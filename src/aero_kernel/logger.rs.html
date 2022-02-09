@@ -126,8 +126,6 @@
 <span id="121">121</span>
 <span id="122">122</span>
 <span id="123">123</span>
-<span id="124">124</span>
-<span id="125">125</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -157,7 +155,6 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils::buffer::RingBuffer</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils::sync::Mutex</span>;
 
-<span class="kw">const</span> <span class="ident">MAX_LOG_LEVEL_SPACE</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">6</span>;
 <span class="kw">const</span> <span class="ident">DEFAULT_LOG_RING_BUFFER_SIZE</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">4096</span>;
 
 <span class="kw">static</span> <span class="ident">LOG_RING_BUFFER</span>: <span class="ident">Once</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">RingBuffer</span><span class="op">&lt;</span>[<span class="ident">u8</span>; <span class="ident">DEFAULT_LOG_RING_BUFFER_SIZE</span>]<span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Once::new</span>();
@@ -176,6 +173,11 @@
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">enabled</span>(<span class="ident">record</span>.<span class="ident">metadata</span>()) {
             <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::drivers::uart_16550</span>::<span class="kw-2">*</span>;
 
+            <span class="kw">let</span> <span class="ident">file</span> <span class="op">=</span> <span class="ident">record</span>.<span class="ident">file</span>().<span class="ident">unwrap_or</span>(<span class="string">&quot;unknown&quot;</span>);
+            <span class="kw">let</span> <span class="ident">file</span> <span class="op">=</span> <span class="ident">file</span>.<span class="ident">strip_prefix</span>(<span class="string">&quot;aero_kernel/src/&quot;</span>).<span class="ident">unwrap_or</span>(<span class="ident">file</span>);
+
+            <span class="kw">let</span> <span class="ident">line</span> <span class="op">=</span> <span class="ident">record</span>.<span class="ident">line</span>().<span class="ident">unwrap_or</span>(<span class="number">0</span>);
+
             <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">pp</span>) <span class="op">=</span> <span class="ident">record</span>.<span class="ident">module_path</span>() {
                 <span class="comment">// Only log the vm logs if the vmlog feature is enabled ;^).</span>
                 <span class="kw">if</span> <span class="ident">pp</span> <span class="op">==</span> <span class="string">&quot;aero_kernel::userland::vm&quot;</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="macro">cfg!</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;vmlog&quot;</span>) {
@@ -184,13 +186,7 @@
             }
 
             <span class="kw">let</span> <span class="ident">level</span> <span class="op">=</span> <span class="ident">record</span>.<span class="ident">level</span>();
-            <span class="kw">let</span> <span class="ident">spaces</span> <span class="op">=</span> <span class="ident">MAX_LOG_LEVEL_SPACE</span> <span class="op">-</span> <span class="ident">level</span>.<span class="ident">as_str</span>().<span class="ident">len</span>();
             <span class="kw">let</span> <span class="ident">rendy_dbg</span> <span class="op">=</span> <span class="ident">RENDY_DEBUG</span>.<span class="ident">load</span>(<span class="ident">Ordering::Relaxed</span>);
-
-            <span class="kw">macro</span> <span class="ident">log</span>($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">arg</span>:<span class="ident">tt</span>)<span class="kw-2">*</span>) {
-                <span class="macro-nonterminal">$</span><span class="macro">crate::drivers::uart_16550::serial_print!</span>(<span class="string">&quot;{}&quot;</span>, <span class="macro">format_args!</span>($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">arg</span>)<span class="kw-2">*</span>));
-                <span class="kw">if</span> <span class="ident">rendy_dbg</span> { <span class="macro-nonterminal">$</span><span class="macro">crate::rendy::print!</span>(<span class="string">&quot;{}&quot;</span>, <span class="macro">format_args!</span>($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">arg</span>)<span class="kw-2">*</span>)); }
-            }
 
             <span class="kw">macro</span> <span class="ident">log_ln</span>($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">arg</span>:<span class="ident">tt</span>)<span class="kw-2">*</span>) {
                 <span class="macro">serial_println!</span>(<span class="string">&quot;{}&quot;</span>, <span class="macro">format_args!</span>($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">arg</span>)<span class="kw-2">*</span>));
@@ -201,18 +197,18 @@
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">log_ring</span> <span class="op">=</span> <span class="ident">LOG_RING_BUFFER</span>.<span class="ident">get</span>().<span class="ident">unwrap</span>().<span class="ident">lock_irq</span>();
             <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="macro">writeln!</span>(<span class="ident">log_ring</span>, <span class="string">&quot;[{}] {}&quot;</span>, <span class="ident">level</span>, <span class="ident">record</span>.<span class="ident">args</span>());
 
+            <span class="macro">serial_print!</span>(<span class="string">&quot;\x1b[37;1m{file}:{line} &quot;</span>);
+
             <span class="kw">match</span> <span class="ident">record</span>.<span class="ident">level</span>() {
-                <span class="ident">Level::Error</span> =&gt; <span class="macro">serial_print!</span>(<span class="string">&quot;\x1b[1;41m&quot;</span>), <span class="comment">// bold red</span>
-                <span class="ident">Level::Warn</span> =&gt; <span class="macro">serial_print!</span>(<span class="string">&quot;\x1b[1;43m&quot;</span>),  <span class="comment">// bold yellow</span>
-                <span class="ident">Level::Info</span> =&gt; <span class="macro">serial_print!</span>(<span class="string">&quot;\x1b[1;42m&quot;</span>),  <span class="comment">// bold green</span>
-                <span class="ident">Level::Debug</span> =&gt; <span class="macro">serial_print!</span>(<span class="string">&quot;\x1b[1;44m&quot;</span>), <span class="comment">// bold blue</span>
-                <span class="ident">Level::Trace</span> =&gt; <span class="macro">serial_print!</span>(<span class="string">&quot;\x1b[1;45m&quot;</span>), <span class="comment">// bold magenta</span>
+                <span class="ident">Level::Info</span> =&gt; <span class="macro">serial_print!</span>(<span class="string">&quot;\x1b[32;1minfo &quot;</span>), <span class="comment">// green info</span>
+                <span class="ident">Level::Warn</span> =&gt; <span class="macro">serial_print!</span>(<span class="string">&quot;\x1b[33;1mwarn &quot;</span>), <span class="comment">// yellow warn</span>
+                <span class="ident">Level::Error</span> =&gt; <span class="macro">serial_print!</span>(<span class="string">&quot;\x1b[32;1merror &quot;</span>), <span class="comment">// red error</span>
+                <span class="ident">Level::Debug</span> =&gt; <span class="macro">serial_print!</span>(<span class="string">&quot;\x1b[35;1mdebug &quot;</span>), <span class="comment">// gray debug</span>
+                <span class="ident">Level::Trace</span> =&gt; <span class="macro">serial_print!</span>(<span class="string">&quot;\x1b[34;1mtrace &quot;</span>), <span class="comment">// blue trace</span>
             }
 
-            <span class="macro">log!</span>(<span class="string">&quot;  {}{: &lt;2$} &quot;</span>, <span class="ident">level</span>, <span class="string">&quot;&quot;</span>, <span class="ident">spaces</span>);
-            <span class="macro">crate::drivers::uart_16550::serial_print!</span>(<span class="string">&quot;\x1b[0;0m&quot;</span>);
-
-            <span class="macro">log_ln!</span>(<span class="string">&quot;      {}&quot;</span>, <span class="ident">record</span>.<span class="ident">args</span>());
+            <span class="macro">crate::drivers::uart_16550::serial_print!</span>(<span class="string">&quot;\x1b[0m&quot;</span>);
+            <span class="macro">log_ln!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">record</span>.<span class="ident">args</span>());
         }
     }
 
@@ -254,5 +250,5 @@
         .<span class="ident">unwrap</span>();
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (71226d717 2022-02-04)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (0c292c966 2022-02-08)" ></div>
 </body></html>
