@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 From 4f8a7cd8dd0758d21118191372fc95bf17663e43 Mon Sep 17 00:00:00 2001
 From: unknown <andypythonappdeveloper@gmail.com>
 Date: Sun, 6 Jun 2021 16:37:54 +1000
@@ -1396,3 +1397,30 @@ index 0000000..4d9420b
 +endif
 -- 
 2.25.1
+=======
+From 8917c56f1216c079d9a3560b03d4cc30c96920c5 Mon Sep 17 00:00:00 2001
+From: Andy-Python-Programmer <andypythonappdeveloper@gmail.com>
+Date: Thu, 10 Feb 2022 19:12:25 +1100
+Subject: [PATCH] yes
+
+Signed-off-by: Andy-Python-Programmer <andypythonappdeveloper@gmail.com>
+---
+ sysdeps/aero/generic/filesystem.cpp | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/sysdeps/aero/generic/filesystem.cpp b/sysdeps/aero/generic/filesystem.cpp
+index 0e73b63..54252ba 100644
+--- a/sysdeps/aero/generic/filesystem.cpp
++++ b/sysdeps/aero/generic/filesystem.cpp
+@@ -256,7 +256,6 @@ int sys_pselect(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
+                 const struct timespec *timeout, const sigset_t *sigmask,
+                 int *num_events) {
+     mlibc::infoLogger() << "sys_pselect() is not implemented" << frg::endlog;
+-    *num_events = 10;
+     return 0;
+ }
+ 
+-- 
+2.25.1
+
+>>>>>>> e83dd16df (tty: handle `\u{8}` escape sequence (backspace))
