@@ -122,6 +122,28 @@
 <span id="117">117</span>
 <span id="118">118</span>
 <span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
+<span id="131">131</span>
+<span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
+<span id="135">135</span>
+<span id="136">136</span>
+<span id="137">137</span>
+<span id="138">138</span>
+<span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -158,6 +180,8 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils::sync::Mutex</span>;
 
 <span class="kw">const</span> <span class="ident">PIT_FREQUENCY_HZ</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">1000</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">PIT_DIVIDEND</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">1193182</span>;
+
 <span class="kw">const</span> <span class="ident">SCHED_TIMESLICE_MS</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">15</span>;
 
 <span class="kw">static</span> <span class="ident">SCHED_TICKS</span>: <span class="ident">AtomicUsize</span> <span class="op">=</span> <span class="ident">AtomicUsize::new</span>(<span class="number">0</span>);
@@ -217,30 +241,50 @@
     <span class="ident">REALTIME_CLOCK</span>.<span class="ident">lock</span>().<span class="ident">clone</span>()
 }
 
+<span class="doccomment">/// Returns the current amount of PIT ticks.</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_current_count</span>() -&gt; <span class="ident">u16</span> {
+    <span class="kw">unsafe</span> {
+        <span class="ident">io::outb</span>(<span class="number">0x43</span>, <span class="number">0</span>);
+
+        <span class="kw">let</span> <span class="ident">lower</span> <span class="op">=</span> <span class="ident">io::inb</span>(<span class="number">0x40</span>) <span class="kw">as</span> <span class="ident">u16</span>;
+        <span class="kw">let</span> <span class="ident">higher</span> <span class="op">=</span> <span class="ident">io::inb</span>(<span class="number">0x40</span>) <span class="kw">as</span> <span class="ident">u16</span>;
+
+        (<span class="ident">higher</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">8</span>) <span class="op">|</span> <span class="ident">lower</span>
+    }
+}
+
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_reload_value</span>(<span class="ident">new_count</span>: <span class="ident">u16</span>) {
+    <span class="comment">// Channel 0, lo/hi access mode, mode 2 (rate generator)</span>
+    <span class="kw">unsafe</span> {
+        <span class="ident">io::outb</span>(<span class="number">0x43</span>, <span class="number">0x34</span>);
+        <span class="ident">io::outb</span>(<span class="number">0x40</span>, <span class="ident">new_count</span> <span class="kw">as</span> <span class="ident">u8</span>);
+        <span class="ident">io::outb</span>(<span class="number">0x40</span>, (<span class="ident">new_count</span> <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">8</span>) <span class="kw">as</span> <span class="ident">u8</span>);
+    }
+}
+
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_frequency</span>(<span class="ident">frequency</span>: <span class="ident">usize</span>) {
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">new_divisor</span> <span class="op">=</span> <span class="ident">PIT_DIVIDEND</span> <span class="op">/</span> <span class="ident">frequency</span>;
+
+    <span class="kw">if</span> <span class="ident">PIT_DIVIDEND</span> <span class="op">%</span> <span class="ident">frequency</span> <span class="op">&gt;</span> <span class="ident">frequency</span> <span class="op">/</span> <span class="number">2</span> {
+        <span class="ident">new_divisor</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
+    }
+
+    <span class="ident">set_reload_value</span>(<span class="ident">new_divisor</span> <span class="kw">as</span> <span class="ident">u16</span>);
+}
+
 <span class="doccomment">/// This function is responsible for initializing the PIT chip and setting</span>
 <span class="doccomment">/// up the IRQ.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init</span>() {
+    <span class="ident">apic::get_local_apic</span>().<span class="ident">timer_calibrate</span>();
+
     <span class="ident">REALTIME_CLOCK</span>.<span class="ident">lock</span>().<span class="ident">tv_sec</span> <span class="op">=</span> <span class="ident">EPOCH_TAG</span>
         .<span class="ident">get</span>()
         .<span class="ident">expect</span>(<span class="string">&quot;failed to initialize realtime clock&quot;</span>)
         .<span class="ident">epoch</span> <span class="kw">as</span> <span class="ident">isize</span>;
 
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">x</span> <span class="op">=</span> <span class="number">1193182</span> <span class="op">/</span> <span class="ident">PIT_FREQUENCY_HZ</span>;
-
-    <span class="kw">if</span> (<span class="number">1193182</span> <span class="op">%</span> <span class="ident">PIT_FREQUENCY_HZ</span>) <span class="op">&gt;</span> (<span class="ident">PIT_FREQUENCY_HZ</span> <span class="op">/</span> <span class="number">2</span>) {
-        <span class="ident">x</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
-    }
-
-    <span class="kw">unsafe</span> {
-        <span class="ident">io::outb</span>(<span class="number">0x40</span>, (<span class="ident">x</span> <span class="op">&amp;</span> <span class="number">0x00ff</span>) <span class="kw">as</span> <span class="ident">u8</span>);
-        <span class="ident">io::wait</span>();
-
-        <span class="ident">io::outb</span>(<span class="number">0x40</span>, ((<span class="ident">x</span> <span class="op">&amp;</span> <span class="number">0xff00</span>) <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">8</span>) <span class="kw">as</span> <span class="ident">u8</span>);
-        <span class="ident">io::wait</span>();
-    }
-
+    <span class="ident">set_frequency</span>(<span class="ident">PIT_FREQUENCY_HZ</span>);
     <span class="ident">apic::io_apic_setup_legacy_irq</span>(<span class="number">0</span>, <span class="number">1</span>); <span class="comment">// Set up the IRQ.</span>
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (0c292c966 2022-02-08)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (c5c610aad 2022-02-14)" ></div>
 </body></html>

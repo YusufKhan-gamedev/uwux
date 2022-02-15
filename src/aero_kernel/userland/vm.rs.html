@@ -1006,6 +1006,9 @@
 <span id="1001">1001</span>
 <span id="1002">1002</span>
 <span id="1003">1003</span>
+<span id="1004">1004</span>
+<span id="1005">1005</span>
+<span id="1006">1006</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -1288,6 +1291,9 @@
                 <span class="ident">offset_table</span>.<span class="ident">map_to</span>(
                     <span class="ident">Page::containing_address</span>(<span class="ident">addr_aligned</span>),
                     <span class="ident">frame</span>,
+                    <span class="comment">// NOTE: We dont need to remove the writeable flag from this mapping, since</span>
+                    <span class="comment">// the writeable flag will be removed from the parent and child on fork so,</span>
+                    <span class="comment">// the mapping gets copied on write.</span>
                     <span class="ident">PageTableFlags::USER_ACCESSIBLE</span>
                         <span class="op">|</span> <span class="ident">PageTableFlags::PRESENT</span>
                         <span class="op">|</span> <span class="self">self</span>.<span class="ident">protection</span>.<span class="ident">into</span>(),
@@ -2010,5 +2016,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (0c292c966 2022-02-08)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (c5c610aad 2022-02-14)" ></div>
 </body></html>

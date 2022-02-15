@@ -7,7 +7,7 @@
     <h1 class="fqn"><span class="in-band">Module <a href="../index.html">aero_kernel</a>::<wbr><a class="mod" href="#">modules</a><button id="copy-path" onclick="copy_path(this)" title="Copy item path to clipboard"><img src="../../clipboard.svg" width="19" height="18" alt="Copy item path"></button></span></h1><span class="out-of-band"><a class="srclink" href="../../src/aero_kernel/modules.rs.html#1-60">source</a> · <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class="inner">&#x2212;</span>]</a></span></div><details class="rustdoc-toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>A kernel module is an object file that contains code that can extend
 the kernel functionality at runtime. When a kernel module is no longer needed,
 it can be unloaded. Most of the device drivers are used in the form of kernel modules.</p>
-<h3 id="example" class="section-header"><a href="#example">Example</a></h3>
+<h3 id="example"><a href="#example">Example</a></h3>
 <div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">fn</span> <span class="ident">hello_init</span>() {}
 <span class="kw">fn</span> <span class="ident">hello_exit</span>() {}
 
@@ -24,5 +24,5 @@ itself (this is temporary and modules will be loaded from the filesystem in the 
 </div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.make_module_init.html" title="aero_kernel::modules::make_module_init fn">make_module_init</a></div><div class="item-right docblock-short"><p>Inner helper function to make sure the function provided to the <a href="../macro.module_init.html" title="module_init">module_init</a> macro
 has a valid function signature. This function returns the passed module init function as
 a const void pointer.</p>
-</div></div></div></section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (0c292c966 2022-02-08)" ></div>
+</div></div></div></section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (c5c610aad 2022-02-14)" ></div>
 </body></html>

@@ -7,7 +7,7 @@
     <h1 class="fqn"><span class="in-band">Crate <a class="mod" href="#">raw_cpuid</a><button id="copy-path" onclick="copy_path(this)" title="Copy item path to clipboard"><img src="../clipboard.svg" width="19" height="18" alt="Copy item path"></button></span></h1><span class="out-of-band"><a class="srclink" href="../src/raw_cpuid/lib.rs.html#1-5324">source</a> · <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class="inner">&#x2212;</span>]</a></span></div><details class="rustdoc-toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>A library to parse the x86 CPUID instruction, written in rust with no
 external dependencies. The implementation closely resembles the Intel CPUID
 manual description. The library works with no_std.</p>
-<h3 id="example" class="section-header"><a href="#example">Example</a></h3>
+<h3 id="example"><a href="#example">Example</a></h3>
 <div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use</span> <span class="ident">raw_cpuid::CpuId</span>;
 <span class="kw">let</span> <span class="ident">cpuid</span> <span class="op">=</span> <span class="ident">CpuId::new</span>();
 
@@ -28,7 +28,7 @@ manual description. The library works with no_std.</p>
 } <span class="kw">else</span> {
     <span class="macro">println!</span>(<span class="string">&quot;No cache parameter information available&quot;</span>)
 }</code></pre></div>
-<h2 id="platform-support" class="section-header"><a href="#platform-support">Platform support</a></h2>
+<h2 id="platform-support"><a href="#platform-support">Platform support</a></h2>
 <p>CPU vendors may choose to not support certain functions/leafs in cpuid or
 only support them partially. We highlight this with the following emojis
 throughout the documentation:</p>
@@ -107,5 +107,5 @@ vendor on some of its chips. You will still have to query it at runtime.</p>
 </div></div><div class="item-row"><div class="item-left module-item"><a class="enum" href="enum.TopologyType.html" title="raw_cpuid::TopologyType enum">TopologyType</a></div><div class="item-right docblock-short"><p>What type of core we have at this level in the topology (real CPU or hyper-threaded).</p>
 </div></div></div><h2 id="constants" class="small-section-header"><a href="#constants">Constants</a></h2>
 <div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="constant" href="constant.CACHE_INFO_TABLE.html" title="raw_cpuid::CACHE_INFO_TABLE constant">CACHE_INFO_TABLE</a></div><div class="item-right docblock-short"><p>This table is taken from Intel manual (Section CPUID instruction).</p>
-</div></div></div></section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../" data-current-crate="raw_cpuid" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (0c292c966 2022-02-08)" ></div>
+</div></div></div></section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../" data-current-crate="raw_cpuid" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (c5c610aad 2022-02-14)" ></div>
 </body></html>

@@ -238,6 +238,14 @@
 <span id="233">233</span>
 <span id="234">234</span>
 <span id="235">235</span>
+<span id="236">236</span>
+<span id="237">237</span>
+<span id="238">238</span>
+<span id="239">239</span>
+<span id="240">240</span>
+<span id="241">241</span>
+<span id="242">242</span>
+<span id="243">243</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -265,6 +273,7 @@
 <span class="kw">use</span> <span class="ident">alloc::alloc::alloc_zeroed</span>;
 
 <span class="kw">use</span> <span class="ident">alloc::vec::Vec</span>;
+<span class="kw">use</span> <span class="ident">bit_field::BitField</span>;
 <span class="kw">use</span> <span class="ident">spin::RwLock</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::apic</span>;
@@ -350,9 +359,14 @@
                     <span class="comment">// Send the init IPI.</span>
                     <span class="kw">unsafe</span> {
                         <span class="kw">if</span> <span class="ident">bsp</span>.<span class="ident">apic_type</span>() <span class="op">==</span> <span class="ident">ApicType::X2apic</span> {
-                            <span class="ident">bsp</span>.<span class="ident">set_icr_x2apic</span>(((<span class="ident">local_apic</span>.<span class="ident">apic_id</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">32</span>) <span class="op">|</span> <span class="number">0x4500</span>);
+                            <span class="ident">bsp</span>.<span class="ident">set_icr</span>(((<span class="ident">local_apic</span>.<span class="ident">apic_id</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">32</span>) <span class="op">|</span> <span class="number">0x4500</span>);
                         } <span class="kw">else</span> {
-                            <span class="ident">bsp</span>.<span class="ident">set_icr_xapic</span>((<span class="ident">local_apic</span>.<span class="ident">apic_id</span> <span class="kw">as</span> <span class="ident">u32</span>) <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">24</span>, <span class="number">0x4500</span>);
+                            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">value</span> <span class="op">=</span> <span class="number">0u64</span>;
+
+                            <span class="ident">value</span>.<span class="ident">set_bits</span>(..<span class="number">32</span>, (<span class="ident">local_apic</span>.<span class="ident">apic_id</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">24</span>);
+                            <span class="ident">value</span>.<span class="ident">set_bits</span>(<span class="number">32</span>.., <span class="number">0x4500</span>);
+
+                            <span class="ident">bsp</span>.<span class="ident">set_icr</span>(<span class="ident">value</span>);
                         }
                     }
 
@@ -361,14 +375,16 @@
                     <span class="comment">// Send the startup IPI.</span>
                     <span class="kw">unsafe</span> {
                         <span class="kw">if</span> <span class="ident">bsp</span>.<span class="ident">apic_type</span>() <span class="op">==</span> <span class="ident">ApicType::X2apic</span> {
-                            <span class="ident">bsp</span>.<span class="ident">set_icr_x2apic</span>(
+                            <span class="ident">bsp</span>.<span class="ident">set_icr</span>(
                                 ((<span class="ident">local_apic</span>.<span class="ident">apic_id</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">32</span>) <span class="op">|</span> (<span class="ident">page_index</span> <span class="op">|</span> <span class="number">0x4600</span>) <span class="kw">as</span> <span class="ident">u64</span>,
                             );
                         } <span class="kw">else</span> {
-                            <span class="ident">bsp</span>.<span class="ident">set_icr_xapic</span>(
-                                ((<span class="ident">local_apic</span>.<span class="ident">apic_id</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">24</span>) <span class="kw">as</span> <span class="ident">u32</span>,
-                                (<span class="ident">page_index</span> <span class="op">|</span> <span class="number">0x4600</span>) <span class="kw">as</span> <span class="ident">u32</span>,
-                            )
+                            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">value</span> <span class="op">=</span> <span class="number">0u64</span>;
+
+                            <span class="ident">value</span>.<span class="ident">set_bits</span>(..<span class="number">32</span>, (<span class="ident">local_apic</span>.<span class="ident">apic_id</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">24</span>);
+                            <span class="ident">value</span>.<span class="ident">set_bits</span>(<span class="number">32</span>.., (<span class="ident">page_index</span> <span class="op">|</span> <span class="number">0x4600</span>) <span class="kw">as</span> <span class="ident">u64</span>);
+
+                            <span class="ident">bsp</span>.<span class="ident">set_icr</span>(<span class="ident">value</span>);
                         }
                     }
 
@@ -474,5 +490,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (0c292c966 2022-02-08)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (c5c610aad 2022-02-14)" ></div>
 </body></html>

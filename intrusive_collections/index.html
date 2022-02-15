@@ -13,7 +13,7 @@ set of <em>values</em>, intrusive collections never allocate memory themselves a
 instead keep track of a set of <em>objects</em>. Such collections are called
 intrusive because they requires explicit support in objects to allow them to
 be inserted into a collection.</p>
-<h2 id="example" class="section-header"><a href="#example">Example</a></h2>
+<h2 id="example"><a href="#example">Example</a></h2>
 <div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use</span> <span class="ident">intrusive_collections::intrusive_adapter</span>;
 <span class="kw">use</span> <span class="ident">intrusive_collections</span>::{<span class="ident">LinkedList</span>, <span class="ident">LinkedListLink</span>};
 <span class="kw">use</span> <span class="ident">std::cell::Cell</span>;
@@ -63,7 +63,7 @@ be inserted into a collection.</p>
 <span class="comment">// Dropping the collection will automatically free b and c by</span>
 <span class="comment">// transforming them back into Box&lt;Test&gt; and dropping them.</span>
 <span class="ident">drop</span>(<span class="ident">list</span>);</code></pre></div>
-<h2 id="links-and-adapters" class="section-header"><a href="#links-and-adapters">Links and adapters</a></h2>
+<h2 id="links-and-adapters"><a href="#links-and-adapters">Links and adapters</a></h2>
 <p>Intrusive collections track objects through links which are embedded within
 the objects themselves. It also allows a single object to be part of
 multiple intrusive collections at once by having multiple links in it.</p>
@@ -112,7 +112,7 @@ keep all elements in the tree in ascending order.</p>
 <span class="ident">b</span>.<span class="ident">push_front</span>(<span class="ident">test</span>.<span class="ident">clone</span>());
 <span class="ident">c</span>.<span class="ident">push_front</span>(<span class="ident">test</span>.<span class="ident">clone</span>());
 <span class="ident">d</span>.<span class="ident">insert</span>(<span class="ident">test</span>);</code></pre></div>
-<h2 id="cursors" class="section-header"><a href="#cursors">Cursors</a></h2>
+<h2 id="cursors"><a href="#cursors">Cursors</a></h2>
 <p>Intrusive collections are manipulated using cursors. A cursor is similar to
 an iterator, except that it can freely seek back-and-forth, and can safely
 mutate the list during iteration. This is similar to how a C++ iterator
@@ -156,7 +156,7 @@ function which removes all values within a given range from a <code>RBTree</code
         <span class="ident">cursor</span>.<span class="ident">remove</span>();
     }
 }</code></pre></div>
-<h2 id="scoped-collections" class="section-header"><a href="#scoped-collections">Scoped collections</a></h2>
+<h2 id="scoped-collections"><a href="#scoped-collections">Scoped collections</a></h2>
 <p>Instead of taking ownership of objects inserted into them, intrusive
 collections can also work with borrowed values. This works by using
 lifetimes and the borrow checker to ensure that any objects inserted into an
@@ -221,7 +221,7 @@ intrusive collection will outlive the collection itself.</p>
 <span class="comment">// the list.</span>
 <span class="ident">a</span>.<span class="ident">value</span>.<span class="ident">set</span>(<span class="number">7</span>);
 <span class="macro">assert_eq!</span>(<span class="ident">list2</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">value</span>.<span class="ident">get</span>()).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>(), [<span class="number">7</span>, <span class="number">5</span>, <span class="number">6</span>]);</code></pre></div>
-<h2 id="safety" class="section-header"><a href="#safety">Safety</a></h2>
+<h2 id="safety"><a href="#safety">Safety</a></h2>
 <p>While it is possible to use intrusive collections without any unsafe code,
 this crate also exposes a few unsafe features.</p>
 <p>The <code>cursor_from_ptr</code> and <code>cursor_mut_from_ptr</code> allow you to create a
@@ -261,5 +261,5 @@ an object. This key can then be used as an index in certain intrusive
 collections (currently only <code>RBTree</code> uses this).</p>
 </div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.LinkOps.html" title="intrusive_collections::LinkOps trait">LinkOps</a></div><div class="item-right docblock-short"><p>Base trait for link operations.</p>
 </div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.PointerOps.html" title="intrusive_collections::PointerOps trait">PointerOps</a></div><div class="item-right docblock-short"><p>Trait for pointer conversion operations.</p>
-</div></div></div></section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../" data-current-crate="intrusive_collections" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (0c292c966 2022-02-08)" ></div>
+</div></div></div></section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../" data-current-crate="intrusive_collections" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (c5c610aad 2022-02-14)" ></div>
 </body></html>

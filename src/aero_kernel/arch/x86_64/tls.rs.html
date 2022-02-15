@@ -207,6 +207,7 @@
 <span id="202">202</span>
 <span id="203">203</span>
 <span id="204">204</span>
+<span id="205">205</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -324,6 +325,7 @@
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PerCpuData</span> {
     <span class="kw">pub</span> <span class="ident">cpuid</span>: <span class="ident">usize</span>,
+    <span class="kw">pub</span> <span class="ident">lapic_timer_frequency</span>: <span class="ident">u32</span>,
 
     <span class="kw">pub</span>(<span class="kw">super</span>) <span class="ident">gdt</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="kw-2">mut</span> [<span class="ident">GdtEntry</span>],
 }
@@ -412,5 +414,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (0c292c966 2022-02-08)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (c5c610aad 2022-02-14)" ></div>
 </body></html>

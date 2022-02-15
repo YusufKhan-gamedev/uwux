@@ -186,26 +186,6 @@
 <span id="181">181</span>
 <span id="182">182</span>
 <span id="183">183</span>
-<span id="184">184</span>
-<span id="185">185</span>
-<span id="186">186</span>
-<span id="187">187</span>
-<span id="188">188</span>
-<span id="189">189</span>
-<span id="190">190</span>
-<span id="191">191</span>
-<span id="192">192</span>
-<span id="193">193</span>
-<span id="194">194</span>
-<span id="195">195</span>
-<span id="196">196</span>
-<span id="197">197</span>
-<span id="198">198</span>
-<span id="199">199</span>
-<span id="200">200</span>
-<span id="201">201</span>
-<span id="202">202</span>
-<span id="203">203</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -322,9 +302,6 @@
     <span class="ident">drivers::mouse::init</span>();
     <span class="macro">log::info!</span>(<span class="string">&quot;loaded PS/2 driver&quot;</span>);
 
-    <span class="ident">time::init</span>();
-    <span class="macro">log::info!</span>(<span class="string">&quot;loaded PIT&quot;</span>);
-
     <span class="ident">fs::init</span>().<span class="ident">unwrap</span>();
     <span class="macro">log::info!</span>(<span class="string">&quot;loaded filesystem&quot;</span>);
 
@@ -343,6 +320,9 @@
     <span class="kw">unsafe</span> {
         <span class="ident">interrupts::enable_interrupts</span>();
     }
+
+    <span class="ident">time::init</span>();
+    <span class="macro">log::info!</span>(<span class="string">&quot;loaded timer&quot;</span>);
 
     <span class="comment">// Pre-scheduler init done. Now we are waiting for the main kernel</span>
     <span class="comment">// thread to be scheduled.</span>
@@ -381,27 +361,7 @@
     <span class="macro">unreachable!</span>()
 }
 
-<span class="attribute">#[<span class="ident">no_mangle</span>]</span>
-<span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">kernel_ap_startup</span>(<span class="ident">ap_id</span>: <span class="ident">u64</span>, <span class="ident">stack_top_addr</span>: <span class="ident">VirtAddr</span>) -&gt; <span class="op">!</span> {
-    <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::arch::tls</span>;
-
-    <span class="macro">log::debug!</span>(<span class="string">&quot;booting CPU {}&quot;</span>, <span class="ident">ap_id</span>);
-
-    <span class="ident">arch::gdt::init_boot</span>();
-    <span class="macro">log::info!</span>(<span class="string">&quot;AP{}: loaded boot GDT&quot;</span>, <span class="ident">ap_id</span>);
-
-    <span class="ident">tls::init</span>(<span class="ident">ap_id</span> <span class="kw">as</span> <span class="ident">usize</span>);
-    <span class="macro">log::info!</span>(<span class="string">&quot;AP{}: loaded TLS&quot;</span>, <span class="ident">ap_id</span>);
-
-    <span class="ident">arch::gdt::init</span>(<span class="ident">stack_top_addr</span>);
-    <span class="macro">log::info!</span>(<span class="string">&quot;AP{}: loaded GDT&quot;</span>, <span class="ident">ap_id</span>);
-
-    <span class="ident">apic::mark_ap_ready</span>(<span class="bool-val">true</span>);
-
-    <span class="kw">while</span> <span class="op">!</span><span class="ident">apic::is_bsp_ready</span>() {
-        <span class="ident">interrupts::pause</span>();
-    }
-
+<span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">aero_ap_main</span>(<span class="ident">ap_id</span>: <span class="ident">usize</span>) -&gt; <span class="op">!</span> {
     <span class="ident">userland::init_ap</span>();
     <span class="macro">log::info!</span>(<span class="string">&quot;AP{}: Loaded userland&quot;</span>, <span class="ident">ap_id</span>);
 
@@ -410,5 +370,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (0c292c966 2022-02-08)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (c5c610aad 2022-02-14)" ></div>
 </body></html>

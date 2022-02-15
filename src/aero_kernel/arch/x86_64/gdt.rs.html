@@ -443,6 +443,8 @@
 <span id="438">438</span>
 <span id="439">439</span>
 <span id="440">440</span>
+<span id="441">441</span>
+<span id="442">442</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -713,24 +715,26 @@
     }
 }
 
-<span class="doccomment">/// The Task State Segment (TSS) is a special data structure for x86 processors which holds information about a task.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// **Notes**: &lt;https://wiki.osdev.org/Task_State_Segment&gt;</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
+<span class="doccomment">/// Although hardware task-switching is not supported in 64-bit mode, a task</span>
+<span class="doccomment">/// state segment is required since the it holds information important to 64-bit</span>
+<span class="doccomment">/// mode and its not directly related to task switching mechanism.</span>
 <span class="attribute">#[<span class="ident">repr</span>(<span class="ident">C</span>, <span class="ident">packed</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Tss</span> {
     <span class="ident">reserved</span>: <span class="ident">u32</span>,
 
-    <span class="doccomment">/// The full 64-bit canonical forms of the stack pointers (RSP) for privilege levels 0-2.</span>
+    <span class="doccomment">/// The full 64-bit canonical forms of the stack pointers (RSP) for</span>
+    <span class="doccomment">/// privilege levels 0-2.</span>
     <span class="kw">pub</span> <span class="ident">rsp</span>: [<span class="ident">u64</span>; <span class="number">3</span>],
     <span class="ident">reserved2</span>: <span class="ident">u64</span>,
 
-    <span class="doccomment">/// The full 64-bit canonical forms of the interrupt stack table (IST) pointers.</span>
+    <span class="doccomment">/// The full 64-bit canonical forms of the interrupt stack table</span>
+    <span class="doccomment">/// (IST) pointers.</span>
     <span class="kw">pub</span> <span class="ident">ist</span>: [<span class="ident">u64</span>; <span class="number">7</span>],
     <span class="ident">reserved3</span>: <span class="ident">u64</span>,
     <span class="ident">reserved4</span>: <span class="ident">u16</span>,
 
-    <span class="doccomment">/// The 16-bit offset to the I/O permission bit map from the 64-bit TSS base.</span>
+    <span class="doccomment">/// The 16-bit offset to the I/O permission bit map from the 64-bit</span>
+    <span class="doccomment">/// TSS base.</span>
     <span class="kw">pub</span> <span class="ident">iomap_base</span>: <span class="ident">u16</span>,
 }
 
@@ -884,5 +888,5 @@
     <span class="macro">asm!</span>(<span class="string">&quot;lgdt [{}]&quot;</span>, <span class="kw">in</span>(<span class="ident">reg</span>) <span class="ident">gdt_descriptor</span>, <span class="ident">options</span>(<span class="ident">nostack</span>));
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (0c292c966 2022-02-08)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (c5c610aad 2022-02-14)" ></div>
 </body></html>

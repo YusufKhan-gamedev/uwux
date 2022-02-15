@@ -9,7 +9,7 @@
 }</code></pre></div>
 </div><details class="rustdoc-toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Unsafe macro to get a raw pointer to an outer object from a pointer to one
 of its fields.</p>
-<h2 id="examples" class="section-header"><a href="#examples">Examples</a></h2>
+<h2 id="examples"><a href="#examples">Examples</a></h2>
 <div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use</span> <span class="ident">intrusive_collections::container_of</span>;
 
 <span class="kw">struct</span> <span class="ident">S</span> { <span class="ident">x</span>: <span class="ident">u32</span>, <span class="ident">y</span>: <span class="ident">u32</span> };
@@ -17,8 +17,8 @@ of its fields.</p>
 <span class="kw">let</span> <span class="ident">field</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">container</span>.<span class="ident">x</span>;
 <span class="kw">let</span> <span class="ident">container2</span>: <span class="kw-2">*const</span> <span class="ident">S</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="macro">container_of!</span>(<span class="ident">field</span>, <span class="ident">S</span>, <span class="ident">x</span>) };
 <span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span><span class="ident">container</span> <span class="kw">as</span> <span class="kw-2">*const</span> <span class="ident">S</span>, <span class="ident">container2</span>);</code></pre></div>
-<h2 id="safety" class="section-header"><a href="#safety">Safety</a></h2>
+<h2 id="safety"><a href="#safety">Safety</a></h2>
 <p>This is unsafe because it assumes that the given expression is a valid
 pointer to the specified field of some container type.</p>
-</div></details></section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../" data-current-crate="intrusive_collections" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (0c292c966 2022-02-08)" ></div>
+</div></details></section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../" data-current-crate="intrusive_collections" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (c5c610aad 2022-02-14)" ></div>
 </body></html>

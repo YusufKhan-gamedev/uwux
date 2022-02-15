@@ -448,6 +448,115 @@
 <span id="443">443</span>
 <span id="444">444</span>
 <span id="445">445</span>
+<span id="446">446</span>
+<span id="447">447</span>
+<span id="448">448</span>
+<span id="449">449</span>
+<span id="450">450</span>
+<span id="451">451</span>
+<span id="452">452</span>
+<span id="453">453</span>
+<span id="454">454</span>
+<span id="455">455</span>
+<span id="456">456</span>
+<span id="457">457</span>
+<span id="458">458</span>
+<span id="459">459</span>
+<span id="460">460</span>
+<span id="461">461</span>
+<span id="462">462</span>
+<span id="463">463</span>
+<span id="464">464</span>
+<span id="465">465</span>
+<span id="466">466</span>
+<span id="467">467</span>
+<span id="468">468</span>
+<span id="469">469</span>
+<span id="470">470</span>
+<span id="471">471</span>
+<span id="472">472</span>
+<span id="473">473</span>
+<span id="474">474</span>
+<span id="475">475</span>
+<span id="476">476</span>
+<span id="477">477</span>
+<span id="478">478</span>
+<span id="479">479</span>
+<span id="480">480</span>
+<span id="481">481</span>
+<span id="482">482</span>
+<span id="483">483</span>
+<span id="484">484</span>
+<span id="485">485</span>
+<span id="486">486</span>
+<span id="487">487</span>
+<span id="488">488</span>
+<span id="489">489</span>
+<span id="490">490</span>
+<span id="491">491</span>
+<span id="492">492</span>
+<span id="493">493</span>
+<span id="494">494</span>
+<span id="495">495</span>
+<span id="496">496</span>
+<span id="497">497</span>
+<span id="498">498</span>
+<span id="499">499</span>
+<span id="500">500</span>
+<span id="501">501</span>
+<span id="502">502</span>
+<span id="503">503</span>
+<span id="504">504</span>
+<span id="505">505</span>
+<span id="506">506</span>
+<span id="507">507</span>
+<span id="508">508</span>
+<span id="509">509</span>
+<span id="510">510</span>
+<span id="511">511</span>
+<span id="512">512</span>
+<span id="513">513</span>
+<span id="514">514</span>
+<span id="515">515</span>
+<span id="516">516</span>
+<span id="517">517</span>
+<span id="518">518</span>
+<span id="519">519</span>
+<span id="520">520</span>
+<span id="521">521</span>
+<span id="522">522</span>
+<span id="523">523</span>
+<span id="524">524</span>
+<span id="525">525</span>
+<span id="526">526</span>
+<span id="527">527</span>
+<span id="528">528</span>
+<span id="529">529</span>
+<span id="530">530</span>
+<span id="531">531</span>
+<span id="532">532</span>
+<span id="533">533</span>
+<span id="534">534</span>
+<span id="535">535</span>
+<span id="536">536</span>
+<span id="537">537</span>
+<span id="538">538</span>
+<span id="539">539</span>
+<span id="540">540</span>
+<span id="541">541</span>
+<span id="542">542</span>
+<span id="543">543</span>
+<span id="544">544</span>
+<span id="545">545</span>
+<span id="546">546</span>
+<span id="547">547</span>
+<span id="548">548</span>
+<span id="549">549</span>
+<span id="550">550</span>
+<span id="551">551</span>
+<span id="552">552</span>
+<span id="553">553</span>
+<span id="554">554</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -467,10 +576,11 @@
  * along with Aero. If not, see &lt;https://www.gnu.org/licenses/&gt;.
  */</span>
 
+<span class="kw">use</span> <span class="ident">core::ptr</span>;
 <span class="kw">use</span> <span class="ident">core::sync::atomic</span>::{<span class="ident">AtomicBool</span>, <span class="ident">AtomicU64</span>, <span class="ident">AtomicUsize</span>, <span class="ident">Ordering</span>};
-<span class="kw">use</span> <span class="ident">core</span>::{<span class="ident">intrinsics</span>, <span class="ident">ptr</span>};
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::mem::paging::VirtAddr</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::arch::tls</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::mem::paging</span>::{<span class="ident">PhysAddr</span>, <span class="ident">VirtAddr</span>};
 <span class="kw">use</span> <span class="ident">raw_cpuid</span>::{<span class="ident">CpuId</span>, <span class="ident">FeatureInfo</span>};
 <span class="kw">use</span> <span class="ident">spin::Once</span>;
 
@@ -478,7 +588,7 @@
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::acpi::madt</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils::io</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::PHYSICAL_MEMORY_OFFSET</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">time</span>, <span class="ident">PHYSICAL_MEMORY_OFFSET</span>};
 
 <span class="kw">const</span> <span class="ident">APIC_SPURIOUS_VECTOR</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0xFF</span>;
 
@@ -494,14 +604,29 @@
 <span class="doccomment">/// EOI register. Write-only.</span>
 <span class="kw">const</span> <span class="ident">XAPIC_EOI</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0x0B0</span>;
 
-<span class="doccomment">/// Interrupt Command Register (ICR). Read/write.</span>
-<span class="kw">const</span> <span class="ident">XAPIC_ICR0</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0x300</span>;
-
-<span class="doccomment">/// Interrupt Command Register (ICR). Read/write.</span>
-<span class="kw">const</span> <span class="ident">XAPIC_ICR1</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0x310</span>;
+<span class="doccomment">/// Interrupt Command Register (ICR). Read/write. (64-bit register)</span>
+<span class="kw">const</span> <span class="ident">XAPIC_ICR</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0x300</span>;
 
 <span class="doccomment">/// Task Priority Register (TPR). Read/write. Bits 31:8 are reserved.</span>
 <span class="kw">const</span> <span class="ident">XAPIC_TPR</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0x080</span>;
+
+<span class="doccomment">/// Local APIC ID register. Read-only. See Section 10.12.5.1 for initial values.</span>
+<span class="kw">const</span> <span class="ident">XAPIC_ID</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0x020</span>;
+
+<span class="doccomment">/// LVT Timer register. Read/write. See Figure 10-8 for reserved bits.</span>
+<span class="kw">const</span> <span class="ident">XAPIC_LVT_TIMER</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0x320</span>;
+
+<span class="doccomment">/// Initial Count register (for Timer). Read/write.</span>
+<span class="kw">const</span> <span class="ident">XAPIC_TIMER_INIT_COUNT</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0x380</span>;
+
+<span class="doccomment">/// Divide Configuration Register (DCR; for Timer). Read/write. See</span>
+<span class="doccomment">/// Figure 10-10 for reserved bits.</span>
+<span class="kw">const</span> <span class="ident">XAPIC_TIMER_DIV_CONF</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0x3E0</span>;
+
+<span class="doccomment">/// Current Count register (for Timer). Read-only.</span>
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">XAPIC_TIMER_CURRENT_COUNT</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0x390</span>;
+
+<span class="kw">const</span> <span class="ident">X2APIC_BASE_MSR</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0x800</span>;
 
 <span class="kw">static</span> <span class="ident">LOCAL_APIC</span>: <span class="ident">Once</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">LocalApic</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Once::new</span>();
 <span class="kw">static</span> <span class="ident">BSP_APIC_ID</span>: <span class="ident">AtomicU64</span> <span class="op">=</span> <span class="ident">AtomicU64::new</span>(<span class="number">0xFFFF_FFFF_FFFF_FFFF</span>);
@@ -524,15 +649,12 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_none</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
         <span class="macro">matches!</span>(<span class="self">self</span>, <span class="ident"><span class="self">Self</span>::None</span>)
     }
-
-    <span class="doccomment">/// Return true if the current CPU supports X2 APIC.</span>
-    <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">supports_x2_apic</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
-        <span class="macro">matches!</span>(<span class="self">self</span>, <span class="ident"><span class="self">Self</span>::X2apic</span>)
-    }
 }
 
 <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">FeatureInfo</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">ApicType</span> {
+    <span class="doccomment">/// Processor support for XAPIC and X2APIC can be detected using</span>
+    <span class="doccomment">/// `cpuid`. If the X2APIC bit is set the processor supports the X2APIC</span>
+    <span class="doccomment">/// capability and can be placed into the X2APIC mode.</span>
     <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">feature_info</span>: <span class="ident">FeatureInfo</span>) -&gt; <span class="self">Self</span> {
         <span class="kw">if</span> <span class="ident">feature_info</span>.<span class="ident">has_x2apic</span>() {
             <span class="ident"><span class="self">Self</span>::X2apic</span>
@@ -560,35 +682,25 @@
     }
 
     <span class="doccomment">/// This function is responsible for initializing this instance of the local APIC.</span>
-    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">init</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
-        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">apic_type</span> {
-            <span class="ident">ApicType::Xapic</span> =&gt; {
-                <span class="comment">// Clear the task priority register to enable all interrupts.</span>
-                <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">XAPIC_TPR</span>, <span class="number">0x00</span>);
-
-                <span class="comment">// Enable local APIC; set spurious interrupt vector.</span>
-                <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">XAPIC_SVR</span>, <span class="number">0x100</span> <span class="op">|</span> <span class="ident">APIC_SPURIOUS_VECTOR</span>);
-
-                <span class="comment">// Set up LVT (Local Vector Table) error.</span>
-                <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">XAPIC_LVT_ERROR</span>, <span class="number">49</span>);
-            }
-
-            <span class="ident">ApicType::X2apic</span> =&gt; {
-                <span class="comment">// Enable X2APIC (Bit 10)</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ## Panics</span>
+    <span class="doccomment">/// * If the APIC type is set to [`ApicType::None`].</span>
+    <span class="kw">fn</span> <span class="ident">init</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
+        <span class="kw">unsafe</span> {
+            <span class="kw">if</span> <span class="self">self</span>.<span class="ident">apic_type</span> <span class="op">==</span> <span class="ident">ApicType::X2apic</span> {
+                <span class="comment">// NOTE: We can place the local APIC in the X2APIC mode by setting the</span>
+                <span class="comment">// X2APIC mode enable bit (bit 10) in the APIC base MSR.</span>
                 <span class="ident">io::wrmsr</span>(<span class="ident">io::IA32_APIC_BASE</span>, <span class="ident">io::rdmsr</span>(<span class="ident">io::IA32_APIC_BASE</span>) <span class="op">|</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">10</span>);
-
-                <span class="comment">// Clear the task priority register to enable all interrupts.</span>
-                <span class="ident">io::wrmsr</span>(<span class="ident">io::IA32_X2APIC_TPR</span>, <span class="number">0x00</span>);
-
-                <span class="comment">// Set up LVT (Local Vector Table) error.</span>
-                <span class="ident">io::wrmsr</span>(<span class="ident">io::IA32_X2APIC_LVT_ERROR</span>, <span class="number">49</span>);
-
-                <span class="comment">// Enable local APIC; set spurious interrupt vector.</span>
-                <span class="ident">io::wrmsr</span>(<span class="ident">io::IA32_X2APIC_SIVR</span>, (<span class="number">0x100</span> <span class="op">|</span> <span class="ident">APIC_SPURIOUS_VECTOR</span>) <span class="kw">as</span> <span class="kw">_</span>);
             }
 
-            <span class="comment">// Do nothing for the case of the None APIC type.</span>
-            <span class="ident">ApicType::None</span> =&gt; {}
+            <span class="comment">// Clear the task priority register to enable all interrupts.</span>
+            <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">XAPIC_TPR</span>, <span class="number">0x00</span>);
+
+            <span class="comment">// Enable local APIC; set spurious interrupt vector.</span>
+            <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">XAPIC_SVR</span>, <span class="number">0x100</span> <span class="op">|</span> <span class="ident">APIC_SPURIOUS_VECTOR</span>);
+
+            <span class="comment">// Set up LVT (Local Vector Table) error.</span>
+            <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">XAPIC_LVT_ERROR</span>, <span class="number">49</span>);
         }
     }
 
@@ -598,106 +710,216 @@
     <span class="doccomment">/// ## Saftey</span>
     <span class="doccomment">/// The provided `cpu` must be a valid logical processor ID and the provided `vec` must be</span>
     <span class="doccomment">/// a valid interrupt vector.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ## Panics</span>
+    <span class="doccomment">/// * If the APIC type is set to [`ApicType::None`].</span>
     <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">send_ipi</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">cpu</span>: <span class="ident">usize</span>, <span class="ident">vec</span>: <span class="ident">u8</span>) {
-        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">apic_type</span> {
-            <span class="ident">ApicType::Xapic</span> =&gt; {
-                <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">XAPIC_ICR1</span>, (<span class="ident">cpu</span> <span class="kw">as</span> <span class="ident">u32</span>) <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">24</span>);
-                <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">XAPIC_ICR0</span>, <span class="ident">vec</span> <span class="kw">as</span> <span class="kw">_</span>);
+        <span class="self">self</span>.<span class="ident">write_long</span>(<span class="ident">XAPIC_ICR</span>, (<span class="ident">cpu</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">32</span> <span class="op">|</span> <span class="ident">vec</span> <span class="kw">as</span> <span class="ident">u64</span>);
 
-                <span class="comment">// Make the ICR delivery status is clear, indicating that the</span>
-                <span class="comment">// local APIC has completed sending the IPI. If set to 1 the</span>
-                <span class="comment">// local APIC has not completed sending the IPI.</span>
-                <span class="kw">while</span> <span class="self">self</span>.<span class="ident">read</span>(<span class="ident">XAPIC_ICR0</span>) <span class="op">&amp;</span> (<span class="number">1u32</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">12</span>) <span class="op">&gt;</span> <span class="number">0</span> {}
-            }
-
-            <span class="ident">ApicType::X2apic</span> =&gt; {
-                <span class="ident">io::wrmsr</span>(<span class="ident">io::IA32_X2APIC_ICR</span>, <span class="ident">vec</span> <span class="kw">as</span> <span class="ident">u64</span> <span class="op">|</span> ((<span class="ident">cpu</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">32</span>));
-
-                <span class="comment">// Make the ICR delivery status is clear, indicating that the</span>
-                <span class="comment">// local APIC has completed sending the IPI. If set to 1 the</span>
-                <span class="comment">// local APIC has not completed sending the IPI.</span>
-                <span class="kw">while</span> <span class="ident">io::rdmsr</span>(<span class="ident">io::IA32_X2APIC_ICR</span>) <span class="op">&amp;</span> (<span class="number">1u64</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">12</span>) <span class="op">&gt;</span> <span class="number">0</span> {}
-            }
-
-            <span class="comment">// Do nothing for the case of the None APIC type.</span>
-            <span class="ident">ApicType::None</span> =&gt; {}
+        <span class="comment">// NOTE: Make the ICR delivery status is clear, indicating that the</span>
+        <span class="comment">// local APIC has completed sending the IPI. If set to 1 the</span>
+        <span class="comment">// local APIC has not completed sending the IPI.</span>
+        <span class="kw">while</span> <span class="self">self</span>.<span class="ident">read</span>(<span class="ident">XAPIC_ICR</span>) <span class="op">&amp;</span> (<span class="number">1u32</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">12</span>) <span class="op">&gt;</span> <span class="number">0</span> {
+            <span class="ident">core::hint::spin_loop</span>();
         }
     }
 
     <span class="doccomment">/// At power up, system hardware assigns a unique APIC ID to each local APIC on the</span>
     <span class="doccomment">/// system bus. This function returns the unique APIC ID this instance.</span>
-    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ## Panics</span>
+    <span class="doccomment">/// * If the APIC type is set to [`ApicType::None`].</span>
     <span class="kw">fn</span> <span class="ident">bsp_id</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u32</span> {
-        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">apic_type</span> {
-            <span class="ident">ApicType::Xapic</span> =&gt; <span class="kw">unsafe</span> { <span class="self">self</span>.<span class="ident">read</span>(<span class="number">0x20</span>) },
-            <span class="ident">ApicType::X2apic</span> =&gt; <span class="kw">unsafe</span> { <span class="ident">io::rdmsr</span>(<span class="ident">io::IA32_X2APIC_APICID</span>) <span class="kw">as</span> <span class="kw">_</span> },
-            <span class="ident">ApicType::None</span> =&gt; <span class="ident">u32::MAX</span>,
-        }
+        <span class="kw">unsafe</span> { <span class="self">self</span>.<span class="ident">read</span>(<span class="ident">XAPIC_ID</span>) }
     }
 
     <span class="doccomment">/// The local APIC records errors detected during interrupt handling in the error status</span>
     <span class="doccomment">/// register (ESR). This function returns the value stored in the error status register</span>
     <span class="doccomment">/// of this instance.</span>
-    <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">get_esr</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">u32</span> {
-        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">apic_type</span> {
-            <span class="ident">ApicType::Xapic</span> =&gt; {
-                <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">XAPIC_ESR</span>, <span class="number">0x00</span>);
-                <span class="self">self</span>.<span class="ident">read</span>(<span class="ident">XAPIC_ESR</span>)
-            }
-
-            <span class="ident">ApicType::X2apic</span> =&gt; {
-                <span class="ident">io::wrmsr</span>(<span class="ident">io::IA32_X2APIC_ESR</span>, <span class="number">0x00</span>);
-                <span class="ident">io::rdmsr</span>(<span class="ident">io::IA32_X2APIC_ESR</span>) <span class="kw">as</span> <span class="kw">_</span>
-            }
-
-            <span class="ident">ApicType::None</span> =&gt; <span class="ident">u32::MAX</span>,
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ## Panics</span>
+    <span class="doccomment">/// * If the APIC type is set to [`ApicType::None`].</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_esr</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">u32</span> {
+        <span class="kw">unsafe</span> {
+            <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">XAPIC_ESR</span>, <span class="number">0</span>);
+            <span class="self">self</span>.<span class="ident">read</span>(<span class="ident">XAPIC_ESR</span>)
         }
     }
 
     <span class="doccomment">/// Writes to the EOI register to signal the end of an interrupt. This makes the local APIC</span>
     <span class="doccomment">/// to delete the interrupt from its ISR queue and send a message on the bus indicating that the</span>
     <span class="doccomment">/// interrupt handling has been completed.</span>
-    <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">eoi</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
-        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">apic_type</span> {
-            <span class="ident">ApicType::Xapic</span> =&gt; <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">XAPIC_EOI</span>, <span class="number">0x00</span>),
-            <span class="ident">ApicType::X2apic</span> =&gt; <span class="ident">io::wrmsr</span>(<span class="ident">io::IA32_X2APIC_EOI</span>, <span class="number">0x00</span>),
-            <span class="ident">ApicType::None</span> =&gt; {}
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ## Panics</span>
+    <span class="doccomment">/// * If the APIC type is set to [`ApicType::None`].</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">eoi</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
+        <span class="kw">unsafe</span> {
+            <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">XAPIC_EOI</span>, <span class="number">0</span>);
         }
     }
 
-    <span class="doccomment">/// Returns the APIC type of this local APIC instance.</span>
-    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="doccomment">/// Returns the APIC type of this instance.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">apic_type</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">ApicType</span> {
         <span class="self">self</span>.<span class="ident">apic_type</span>
     }
 
+    <span class="doccomment">/// Stops the local APIC timer.</span>
+    <span class="kw">fn</span> <span class="ident">timer_stop</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
+        <span class="kw">unsafe</span> {
+            <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">XAPIC_TIMER_INIT_COUNT</span>, <span class="number">0</span>);
+            <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">XAPIC_LVT_TIMER</span>, <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">16</span>);
+        }
+    }
+
+    <span class="doccomment">/// Calibrates the local APIC timer using the programmable</span>
+    <span class="doccomment">/// interval timer.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">timer_calibrate</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
+        <span class="self">self</span>.<span class="ident">timer_stop</span>();
+
+        <span class="kw">const</span> <span class="ident">SAMPLES</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0xfffff</span>;
+
+        <span class="kw">unsafe</span> {
+            <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">XAPIC_LVT_TIMER</span>, (<span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">16</span>) <span class="op">|</span> <span class="number">0xff</span>); <span class="comment">// vector 0xff, masked</span>
+            <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">XAPIC_TIMER_DIV_CONF</span>, <span class="number">1</span>);
+
+            <span class="ident">time::set_reload_value</span>(<span class="number">0xffff</span>);
+
+            <span class="kw">let</span> <span class="ident">initial_pit_tick</span> <span class="op">=</span> <span class="ident">time::get_current_count</span>();
+            <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">XAPIC_TIMER_INIT_COUNT</span>, <span class="ident">SAMPLES</span>);
+
+            <span class="kw">while</span> <span class="self">self</span>.<span class="ident">read</span>(<span class="ident">XAPIC_TIMER_CURRENT_COUNT</span>) <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {}
+
+            <span class="kw">let</span> <span class="ident">final_pit_tick</span> <span class="op">=</span> <span class="ident">time::get_current_count</span>();
+            <span class="kw">let</span> <span class="ident">pit_ticks</span> <span class="op">=</span> <span class="ident">initial_pit_tick</span> <span class="op">-</span> <span class="ident">final_pit_tick</span>;
+            <span class="kw">let</span> <span class="ident">timer_frequency</span> <span class="op">=</span> (<span class="ident">SAMPLES</span> <span class="op">/</span> <span class="ident">pit_ticks</span> <span class="kw">as</span> <span class="ident">u32</span>) <span class="op">*</span> <span class="ident">time::PIT_DIVIDEND</span> <span class="kw">as</span> <span class="ident">u32</span>;
+
+            <span class="ident">tls::get_percpu</span>().<span class="ident">lapic_timer_frequency</span> <span class="op">=</span> <span class="ident">timer_frequency</span>;
+        }
+
+        <span class="self">self</span>.<span class="ident">timer_stop</span>();
+    }
+
     <span class="doccomment">/// Sets the provided `value` to the ICR register of the instance.</span>
-    <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">set_icr_xapic</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">value_master</span>: <span class="ident">u32</span>, <span class="ident">value_slave</span>: <span class="ident">u32</span>) {
-        <span class="macro">debug_assert!</span>(<span class="self">self</span>.<span class="ident">apic_type</span> <span class="op">==</span> <span class="ident">ApicType::Xapic</span>); <span class="comment">// Make sure we are dealing with XAPIC.</span>
-
-        <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">XAPIC_ICR1</span>, <span class="ident">value_master</span>);
-        <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">XAPIC_ICR0</span>, <span class="ident">value_slave</span>);
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ## Panics</span>
+    <span class="doccomment">/// * If the APIC type is set to [`ApicType::None`].</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ## Safety</span>
+    <span class="doccomment">/// The provided `value` must be a valid value for the ICR register.</span>
+    <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">set_icr</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">value</span>: <span class="ident">u64</span>) {
+        <span class="self">self</span>.<span class="ident">write_long</span>(<span class="ident">XAPIC_ICR</span>, <span class="ident">value</span>);
     }
 
-    <span class="doccomment">/// Sets the provided `value` to the ICR register of this instance.</span>
-    <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">set_icr_x2apic</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">value</span>: <span class="ident">u64</span>) {
-        <span class="macro">debug_assert!</span>(<span class="self">self</span>.<span class="ident">apic_type</span> <span class="op">==</span> <span class="ident">ApicType::X2apic</span>); <span class="comment">// Make sure we are dealing with X2APIC.</span>
-
-        <span class="ident">io::wrmsr</span>(<span class="ident">io::IA32_X2APIC_ICR</span>, <span class="ident">value</span>);
+    <span class="doccomment">/// Converts the provided APIC register (`register`) into its respective</span>
+    <span class="doccomment">/// MSR for the X2APIC since, in X2APIC mode the `rdmsr` and `wrmsr`</span>
+    <span class="doccomment">/// instructions are used to access the APIC registers.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ## Safety</span>
+    <span class="doccomment">/// The provided `register` must be a valid APIC register.</span>
+    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">register_to_x2apic_msr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">register</span>: <span class="ident">u32</span>) -&gt; <span class="ident">u32</span> {
+        <span class="ident">X2APIC_BASE_MSR</span> <span class="op">+</span> (<span class="ident">register</span> <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">4</span>)
     }
 
-    <span class="doccomment">/// Reads from the provided `register` as described by the MADT.</span>
-    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="doccomment">/// Converts the provided APIC register (`register`) into its respective</span>
+    <span class="doccomment">/// address for the XAPIC.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ## Safety</span>
+    <span class="doccomment">/// The provided `register` must be a valid APIC register.</span>
+    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">register_to_xapic_addr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">register</span>: <span class="ident">u32</span>) -&gt; <span class="ident">VirtAddr</span> {
+        <span class="self">self</span>.<span class="ident">address</span> <span class="op">+</span> <span class="ident">register</span> <span class="kw">as</span> <span class="ident">u64</span>
+    }
+
+    <span class="doccomment">/// Reads the provided APIC register (`register`) and returns its value.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ## Panics</span>
+    <span class="doccomment">/// * If the APIC type is set to [`ApicType::None`].</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ## Notes</span>
+    <span class="doccomment">/// This function works for both XAPIC and X2APIC.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ## Safety</span>
+    <span class="doccomment">/// The provided `register` must be a valid APIC register.</span>
     <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">read</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">register</span>: <span class="ident">u32</span>) -&gt; <span class="ident">u32</span> {
-        <span class="ident">intrinsics::volatile_load</span>((<span class="self">self</span>.<span class="ident">address</span> <span class="op">+</span> <span class="ident">register</span> <span class="kw">as</span> <span class="ident">u64</span>).<span class="ident">as_u64</span>() <span class="kw">as</span> <span class="kw-2">*const</span> <span class="ident">u32</span>)
+        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">apic_type</span> {
+            <span class="ident">ApicType::X2apic</span> =&gt; {
+                <span class="kw">let</span> <span class="ident">msr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">register_to_x2apic_msr</span>(<span class="ident">register</span>);
+                <span class="ident">io::rdmsr</span>(<span class="ident">msr</span>) <span class="kw">as</span> <span class="kw">_</span>
+            }
+
+            <span class="ident">ApicType::Xapic</span> =&gt; {
+                <span class="kw">let</span> <span class="ident">addr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">register_to_xapic_addr</span>(<span class="ident">register</span>);
+                <span class="ident">addr</span>.<span class="ident">as_ptr</span>::<span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>().<span class="ident">read_volatile</span>()
+            }
+
+            <span class="ident">ApicType::None</span> =&gt; <span class="macro">unreachable!</span>(),
+        }
     }
 
-    <span class="doccomment">/// Write to the provided `register` with the provided `data` as described by the MADT.</span>
-    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="doccomment">/// Writes the provided 32-bit value (`value`) to the provided</span>
+    <span class="doccomment">/// APIC register (`register`).</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ## Panics</span>
+    <span class="doccomment">/// * If the APIC type is set to [`ApicType::None`].</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ## Notes</span>
+    <span class="doccomment">/// This function works for both XAPIC and X2APIC.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ## Safety</span>
+    <span class="doccomment">/// * The provided `register` must be a valid APIC register and the `value` must</span>
+    <span class="doccomment">/// be a valid value for the provided APIC register.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// * If the `register` is 64-bit wide, then the [`Self::write_long`] function must</span>
+    <span class="doccomment">/// be used instead.</span>
     <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">write</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">register</span>: <span class="ident">u32</span>, <span class="ident">value</span>: <span class="ident">u32</span>) {
-        <span class="ident">intrinsics::volatile_store</span>((<span class="self">self</span>.<span class="ident">address</span> <span class="op">+</span> <span class="ident">register</span> <span class="kw">as</span> <span class="ident">u64</span>).<span class="ident">as_u64</span>() <span class="kw">as</span> <span class="kw-2">*mut</span> <span class="ident">u32</span>, <span class="ident">value</span>);
+        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">apic_type</span> {
+            <span class="ident">ApicType::X2apic</span> =&gt; {
+                <span class="kw">let</span> <span class="ident">msr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">register_to_x2apic_msr</span>(<span class="ident">register</span>);
+                <span class="ident">io::wrmsr</span>(<span class="ident">msr</span>, <span class="ident">value</span> <span class="kw">as</span> <span class="ident">u64</span>);
+            }
+
+            <span class="ident">ApicType::Xapic</span> =&gt; {
+                <span class="kw">let</span> <span class="ident">addr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">register_to_xapic_addr</span>(<span class="ident">register</span>);
+                <span class="ident">addr</span>.<span class="ident">as_mut_ptr</span>::<span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>().<span class="ident">write_volatile</span>(<span class="ident">value</span>);
+            }
+
+            <span class="ident">ApicType::None</span> =&gt; <span class="macro">unreachable!</span>(),
+        }
+    }
+
+    <span class="doccomment">/// Writes the provided 64-bit value (`value`) to the provided</span>
+    <span class="doccomment">/// APIC register (`register`).</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ## Panics</span>
+    <span class="doccomment">/// * If the APIC type is set to [`ApicType::None`].</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ## Notes</span>
+    <span class="doccomment">/// This function works for both XAPIC and X2APIC.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ## Safety</span>
+    <span class="doccomment">/// * The provided `register` must be a valid APIC register and the `value` must</span>
+    <span class="doccomment">/// be a valid value for the provided APIC register.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// * If the `register` is 32-bit wide, then the [`Self::write`] function must</span>
+    <span class="doccomment">/// be used instead.</span>
+    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">write_long</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">register</span>: <span class="ident">u32</span>, <span class="ident">value</span>: <span class="ident">u64</span>) {
+        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">apic_type</span> {
+            <span class="ident">ApicType::X2apic</span> =&gt; {
+                <span class="kw">let</span> <span class="ident">msr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">register_to_x2apic_msr</span>(<span class="ident">register</span>);
+                <span class="ident">io::wrmsr</span>(<span class="ident">msr</span>, <span class="ident">value</span>);
+            }
+
+            <span class="ident">ApicType::Xapic</span> =&gt; {
+                <span class="kw">let</span> <span class="ident">addr_low</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">register_to_xapic_addr</span>(<span class="ident">register</span>);
+                <span class="kw">let</span> <span class="ident">addr_high</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">register_to_xapic_addr</span>(<span class="ident">register</span> <span class="op">+</span> <span class="number">0x10</span>);
+
+                <span class="ident">addr_high</span>.<span class="ident">as_mut_ptr</span>::<span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>().<span class="ident">write_volatile</span>(<span class="ident">value</span> <span class="kw">as</span> <span class="ident">u32</span>);
+                <span class="ident">addr_low</span>
+                    .<span class="ident">as_mut_ptr</span>::<span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>()
+                    .<span class="ident">write_volatile</span>((<span class="ident">value</span> <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">32</span>) <span class="kw">as</span> <span class="ident">u32</span>);
+            }
+
+            <span class="ident">ApicType::None</span> =&gt; <span class="macro">unreachable!</span>(),
+        }
     }
 }
 
@@ -861,38 +1083,34 @@
         <span class="kw">return</span> <span class="ident">apic_type</span>;
     }
 
-    <span class="kw">let</span> <span class="ident">address_phys</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">io::rdmsr</span>(<span class="ident">io::IA32_APIC_BASE</span>) <span class="kw">as</span> <span class="ident">usize</span> <span class="op">&amp;</span> <span class="number">0xFFFF_0000</span> };
+    <span class="kw">let</span> <span class="ident">apic_base</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">io::rdmsr</span>(<span class="ident">io::IA32_APIC_BASE</span>) };
+    <span class="kw">let</span> <span class="ident">address_phys</span> <span class="op">=</span> <span class="ident">PhysAddr::new</span>(<span class="ident">apic_base</span> <span class="op">&amp;</span> <span class="number">0xFFFF0000</span>);
 
-    <span class="macro">log::debug!</span>(<span class="string">&quot;Found apic at: {:#x}&quot;</span>, <span class="ident">address_phys</span>);
+    <span class="macro">log::debug!</span>(<span class="string">&quot;apic: detected APIC (addr={address_phys:?}, type={apic_type:?})&quot;</span>);
 
-    <span class="kw">let</span> <span class="ident">address_virt</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">PHYSICAL_MEMORY_OFFSET</span> } <span class="op">+</span> <span class="ident">address_phys</span>;
-
+    <span class="kw">let</span> <span class="ident">address_virt</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">PHYSICAL_MEMORY_OFFSET</span> } <span class="op">+</span> <span class="ident">address_phys</span>.<span class="ident">as_u64</span>();
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">local_apic</span> <span class="op">=</span> <span class="ident">LocalApic::new</span>(<span class="ident">address_virt</span>, <span class="ident">apic_type</span>);
 
-    <span class="kw">unsafe</span> {
-        <span class="ident">local_apic</span>.<span class="ident">init</span>();
-    }
+    <span class="ident">local_apic</span>.<span class="ident">init</span>();
 
-    <span class="comment">// Now atomic store the BSP id.</span>
     <span class="kw">let</span> <span class="ident">bsp_id</span> <span class="op">=</span> <span class="ident">local_apic</span>.<span class="ident">bsp_id</span>();
-    <span class="ident">BSP_APIC_ID</span>.<span class="ident">store</span>(<span class="ident">bsp_id</span> <span class="kw">as</span> <span class="ident">u64</span>, <span class="ident">Ordering::SeqCst</span>);
 
+    <span class="ident">BSP_APIC_ID</span>.<span class="ident">store</span>(<span class="ident">bsp_id</span> <span class="kw">as</span> <span class="ident">u64</span>, <span class="ident">Ordering::SeqCst</span>);
     <span class="ident">LOCAL_APIC</span>.<span class="ident">call_once</span>(<span class="kw">move</span> <span class="op">|</span><span class="op">|</span> <span class="ident">Mutex::new</span>(<span class="ident">local_apic</span>));
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>)]</span>
     {
         <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::arch::interrupts::INTERRUPT_CONTROLLER</span>;
 
-        <span class="comment">/*
-         * Now disable PIC as local APIC is initialized.
-         *
-         * SAFTEY: Its safe to disable the PIC chip as now the local APIC is initialized.
-         */</span>
+        <span class="comment">// Now disable PIC as local APIC is initialized.</span>
+        <span class="comment">//</span>
+        <span class="comment">// SAFETY: Its safe to disable the PIC chip as now the local</span>
+        <span class="comment">// APIC is initialized.</span>
         <span class="ident">INTERRUPT_CONTROLLER</span>.<span class="ident">switch_to_apic</span>();
     }
 
     <span class="kw">return</span> <span class="ident">apic_type</span>;
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (0c292c966 2022-02-08)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (c5c610aad 2022-02-14)" ></div>
 </body></html>

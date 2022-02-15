@@ -241,6 +241,30 @@
 <span id="236">236</span>
 <span id="237">237</span>
 <span id="238">238</span>
+<span id="239">239</span>
+<span id="240">240</span>
+<span id="241">241</span>
+<span id="242">242</span>
+<span id="243">243</span>
+<span id="244">244</span>
+<span id="245">245</span>
+<span id="246">246</span>
+<span id="247">247</span>
+<span id="248">248</span>
+<span id="249">249</span>
+<span id="250">250</span>
+<span id="251">251</span>
+<span id="252">252</span>
+<span id="253">253</span>
+<span id="254">254</span>
+<span id="255">255</span>
+<span id="256">256</span>
+<span id="257">257</span>
+<span id="258">258</span>
+<span id="259">259</span>
+<span id="260">260</span>
+<span id="261">261</span>
+<span id="262">262</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -427,14 +451,11 @@
     <span class="ident">interrupts::init</span>();
     <span class="macro">log::info!</span>(<span class="string">&quot;loaded IDT&quot;</span>);
 
-    <span class="kw">let</span> <span class="ident">apic_type</span> <span class="op">=</span> <span class="ident">apic::init</span>();
-    <span class="macro">log::info!</span>(
-        <span class="string">&quot;Loaded local apic (x2apic={})&quot;</span>,
-        <span class="ident">apic_type</span>.<span class="ident">supports_x2_apic</span>()
-    );
+    <span class="ident">apic::init</span>();
+    <span class="macro">log::info!</span>(<span class="string">&quot;loaded APIC&quot;</span>);
 
     <span class="ident">acpi::init</span>(<span class="ident">rsdp_address</span>).<span class="ident">unwrap</span>();
-    <span class="macro">log::info!</span>(<span class="string">&quot;Loaded ACPI&quot;</span>);
+    <span class="macro">log::info!</span>(<span class="string">&quot;loaded ACPI&quot;</span>);
 
     <span class="ident">tls::init</span>(<span class="number">0</span>);
     <span class="macro">log::info!</span>(<span class="string">&quot;loaded TLS&quot;</span>);
@@ -444,8 +465,35 @@
     <span class="ident">gdt::init</span>(<span class="ident">stack_top_addr</span>);
     <span class="macro">log::info!</span>(<span class="string">&quot;loaded GDT&quot;</span>);
 
-    <span class="comment">// Initialize the non-arch specific parts of the kernel.</span>
+    <span class="comment">// Architecture init is done. Now we can initialize and start the init</span>
+    <span class="comment">// process in the non-architecture specific part of the kernel.</span>
     <span class="ident"><span class="kw">crate</span>::aero_main</span>();
+}
+
+<span class="attribute">#[<span class="ident">no_mangle</span>]</span>
+<span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">x86_64_aero_ap_main</span>(<span class="ident">ap_id</span>: <span class="ident">usize</span>, <span class="ident">stack_top_addr</span>: <span class="ident">VirtAddr</span>) {
+    <span class="macro">log::debug!</span>(<span class="string">&quot;booting CPU {}&quot;</span>, <span class="ident">ap_id</span>);
+
+    <span class="ident">gdt::init_boot</span>();
+    <span class="macro">log::info!</span>(<span class="string">&quot;AP{}: loaded boot GDT&quot;</span>, <span class="ident">ap_id</span>);
+
+    <span class="ident">tls::init</span>(<span class="ident">ap_id</span>);
+    <span class="macro">log::info!</span>(<span class="string">&quot;AP{}: loaded TLS&quot;</span>, <span class="ident">ap_id</span>);
+
+    <span class="ident">gdt::init</span>(<span class="ident">stack_top_addr</span>);
+    <span class="macro">log::info!</span>(<span class="string">&quot;AP{}: loaded GDT&quot;</span>, <span class="ident">ap_id</span>);
+
+    <span class="ident">apic::mark_ap_ready</span>(<span class="bool-val">true</span>);
+
+    <span class="comment">// Wait for the BSP to be ready (after the BSP has initialized</span>
+    <span class="comment">// the scheduler).</span>
+    <span class="kw">while</span> <span class="op">!</span><span class="ident">apic::is_bsp_ready</span>() {
+        <span class="ident">core::hint::spin_loop</span>();
+    }
+
+    <span class="comment">// Architecture init is done. Now move on to the non-architecture specific</span>
+    <span class="comment">// initialization of the AP.</span>
+    <span class="ident"><span class="kw">crate</span>::aero_ap_main</span>(<span class="ident">ap_id</span>);
 }
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init_cpu</span>() {
@@ -480,5 +528,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (0c292c966 2022-02-08)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (c5c610aad 2022-02-14)" ></div>
 </body></html>

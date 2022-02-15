@@ -8,7 +8,7 @@
 SSDT tables from ACPI. This crate can be used by kernels to gather information about the
 hardware, and invoke control methods (this is not yet supported) to query and change the state
 of devices in a hardware-independent way.</p>
-<h4 id="using-the-library" class="section-header"><a href="#using-the-library">Using the library</a></h4>
+<h4 id="using-the-library"><a href="#using-the-library">Using the library</a></h4>
 <p>To use the library, you will mostly interact with the <code>AmlContext</code> type. You should create an
 instance of this type using <code>AmlContext::new()</code>, and then pass it tables containing AML
 (probably from the <code>acpi</code> crate), which you’ve mapped into the virtual address space. This will
@@ -18,7 +18,7 @@ allocated on the heap.</p>
 <p>You can then access specific objects by name like so: e.g.</p>
 
 <div class='information'><div class='tooltip ignore'>ⓘ</div></div><div class="example-wrap"><pre class="rust rust-example-rendered ignore"><code><span class="kw">let</span> <span class="ident">my_aml_value</span> <span class="op">=</span> <span class="ident">aml_context</span>.<span class="ident">lookup</span>(<span class="kw-2">&amp;</span><span class="ident">AmlName::from_str</span>(<span class="string">&quot;\\_SB.PCI0.S08._ADR&quot;</span>).<span class="ident">unwrap</span>());</code></pre></div>
-<h4 id="about-the-parser" class="section-header"><a href="#about-the-parser">About the parser</a></h4>
+<h4 id="about-the-parser"><a href="#about-the-parser">About the parser</a></h4>
 <p>The parser is written using a set of custom parser combinators - the code can be confusing on
 first reading, but provides an extensible and type-safe way to write parsers. For an easy
 introduction to parser combinators and the foundations used for this library, I suggest reading
@@ -43,5 +43,5 @@ the context’s <code>debug_verbosity</code> - everything will be printed that i
 <div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="constant" href="constant.AML_INTERPRETER_REVISION.html" title="aml::AML_INTERPRETER_REVISION constant">AML_INTERPRETER_REVISION</a></div><div class="item-right docblock-short"><p>AML has a <code>RevisionOp</code> operator that returns the “AML interpreter revision”. It’s not clear
 what this is actually used for, but this is ours.</p>
 </div></div></div><h2 id="traits" class="small-section-header"><a href="#traits">Traits</a></h2>
-<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.Handler.html" title="aml::Handler trait">Handler</a></div><div class="item-right docblock-short"></div></div></div></section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../" data-current-crate="aml" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (0c292c966 2022-02-08)" ></div>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.Handler.html" title="aml::Handler trait">Handler</a></div><div class="item-right docblock-short"></div></div></div></section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../" data-current-crate="aml" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (c5c610aad 2022-02-14)" ></div>
 </body></html>

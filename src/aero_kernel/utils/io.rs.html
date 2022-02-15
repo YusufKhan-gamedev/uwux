@@ -223,20 +223,6 @@
 <span id="218">218</span>
 <span id="219">219</span>
 <span id="220">220</span>
-<span id="221">221</span>
-<span id="222">222</span>
-<span id="223">223</span>
-<span id="224">224</span>
-<span id="225">225</span>
-<span id="226">226</span>
-<span id="227">227</span>
-<span id="228">228</span>
-<span id="229">229</span>
-<span id="230">230</span>
-<span id="231">231</span>
-<span id="232">232</span>
-<span id="233">233</span>
-<span id="234">234</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -273,27 +259,13 @@
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IA32_FMASK</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0xc0000084</span>;
 
 <span class="doccomment">/// APIC Location and Status (R/W).</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// ```text</span>
+<span class="doccomment">/// [..........]   [..........]   [............]  [...............]  [.......]  [...]  [............]</span>
+<span class="doccomment">/// 63         36  35         12       11                10              9        8    7            0</span>
+<span class="doccomment">///   reserved        address      XAPIC global     enable X2APIC    reserved    BSP      reserved</span>
+<span class="doccomment">/// ```</span>
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IA32_APIC_BASE</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0x1b</span>;
-
-<span class="doccomment">/// x2APIC Spurious Interrupt Vector register (R/W)</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IA32_X2APIC_SIVR</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0x80f</span>;
-
-<span class="doccomment">/// x2APIC ID register (R/O) See X2APIC Specification.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IA32_X2APIC_APICID</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0x802</span>;
-
-<span class="doccomment">/// Error Status Register.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IA32_X2APIC_ESR</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0x828</span>;
-
-<span class="doccomment">/// x2APIC Interrupt Command register (R/W)</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IA32_X2APIC_ICR</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0x830</span>;
-
-<span class="doccomment">/// x2APIC End of Interrupt.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IA32_X2APIC_EOI</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0x80b</span>;
-
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IA32_X2APIC_LVT_ERROR</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0x837</span>;
-
-<span class="doccomment">/// x2APIC Task Priority register (R/W)</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IA32_X2APIC_TPR</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0x808</span>;
 
 <span class="doccomment">/// Wrapper function to the `outb` assembly instruction used to do the</span>
 <span class="doccomment">/// 8-bit low level port output.</span>
@@ -472,5 +444,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (0c292c966 2022-02-08)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (c5c610aad 2022-02-14)" ></div>
 </body></html>

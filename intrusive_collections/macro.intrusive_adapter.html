@@ -31,7 +31,7 @@ In particular this will automatically generate implementations of the
 <div class='information'><div class='tooltip ignore'>ⓘ</div></div><div class="example-wrap"><pre class="rust rust-example-rendered ignore"><code><span class="macro">intrusive_adapter!</span>(<span class="ident">Adapter</span> <span class="op">=</span> <span class="ident">Pointer</span>: <span class="ident">Value</span> { <span class="ident">link_field</span>: <span class="ident">LinkType</span> });</code></pre></div>
 <p>You can create a new instance of an adapter using the <code>new</code> method or the
 <code>NEW</code> associated constant. The adapter also implements the <code>Default</code> trait.</p>
-<h2 id="generics" class="section-header"><a href="#generics">Generics</a></h2>
+<h2 id="generics"><a href="#generics">Generics</a></h2>
 <p>This macro supports generic arguments:</p>
 
 <div class='information'><div class='tooltip ignore'>ⓘ</div></div><div class="example-wrap"><pre class="rust rust-example-rendered ignore"><code><span class="macro">intrusive_adapter!</span>(
@@ -46,7 +46,7 @@ In particular this will automatically generate implementations of the
 <p>Note that due to macro parsing limitations, <code>T: Trait</code> bounds are not
 supported in the generic argument list. You must list any trait bounds in
 a separate <code>where</code> clause at the end of the macro.</p>
-<h2 id="examples" class="section-header"><a href="#examples">Examples</a></h2>
+<h2 id="examples"><a href="#examples">Examples</a></h2>
 <div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use</span> <span class="ident">intrusive_collections</span>::{<span class="ident">LinkedListLink</span>, <span class="ident">RBTreeLink</span>};
 <span class="kw">use</span> <span class="ident">intrusive_collections::intrusive_adapter</span>;
 
@@ -65,5 +65,5 @@ a separate <code>where</code> clause at the end of the macro.</p>
     <span class="ident">val</span>: <span class="ident">T</span>,
 }
 <span class="macro">intrusive_adapter!</span>(<span class="ident">MyAdapter4</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Test2</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>: <span class="ident">Test2</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> { <span class="ident">link</span>: <span class="ident">LinkedListLink</span> } <span class="kw">where</span> <span class="ident">T</span>: <span class="question-mark">?</span><span class="ident">Sized</span> <span class="op">+</span> <span class="ident">Clone</span> <span class="op">+</span> <span class="lifetime">&#39;a</span>);</code></pre></div>
-</div></details></section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../" data-current-crate="intrusive_collections" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (0c292c966 2022-02-08)" ></div>
+</div></details></section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../" data-current-crate="intrusive_collections" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (c5c610aad 2022-02-14)" ></div>
 </body></html>

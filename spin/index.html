@@ -7,7 +7,7 @@
     <h1 class="fqn"><span class="in-band">Crate <a class="mod" href="#">spin</a><button id="copy-path" onclick="copy_path(this)" title="Copy item path to clipboard"><img src="../clipboard.svg" width="19" height="18" alt="Copy item path"></button></span></h1><span class="out-of-band"><a class="srclink" href="../src/spin/lib.rs.html#1-186">source</a> · <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class="inner">&#x2212;</span>]</a></span></div><details class="rustdoc-toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>This crate provides <a href="https://en.wikipedia.org/wiki/Spinlock">spin-based</a> versions of the
 primitives in <code>std::sync</code> and <code>std::lazy</code>. Because synchronization is done through spinning,
 the primitives are suitable for use in <code>no_std</code> environments.</p>
-<h2 id="features" class="section-header"><a href="#features">Features</a></h2>
+<h2 id="features"><a href="#features">Features</a></h2>
 <ul>
 <li>
 <p><code>Mutex</code>, <code>RwLock</code>, <code>Once</code>/<code>SyncOnceCell</code>, and <code>SyncLazy</code> equivalents</p>
@@ -34,7 +34,7 @@ the primitives are suitable for use in <code>no_std</code> environments.</p>
 <p>Different strategies for dealing with contention</p>
 </li>
 </ul>
-<h2 id="relationship-with-stdsync" class="section-header"><a href="#relationship-with-stdsync">Relationship with <code>std::sync</code></a></h2>
+<h2 id="relationship-with-stdsync"><a href="#relationship-with-stdsync">Relationship with <code>std::sync</code></a></h2>
 <p>While <code>spin</code> is not a drop-in replacement for <code>std::sync</code> (and
 <a href="https://matklad.github.io/2020/01/02/spinlocks-considered-harmful.html">should not be considered as such</a>)
 an effort is made to keep this crate reasonably consistent with <code>std::sync</code>.</p>
@@ -61,7 +61,7 @@ an effort is made to keep this crate reasonably consistent with <code>std::sync<
 <ul>
 <li>Locks do not track <a href="https://doc.rust-lang.org/nomicon/poisoning.html">panic poisoning</a>.</li>
 </ul>
-<h3 id="feature-flags" class="section-header"><a href="#feature-flags">Feature flags</a></h3>
+<h3 id="feature-flags"><a href="#feature-flags">Feature flags</a></h3>
 <p>The crate comes with a few feature flags that you may wish to use.</p>
 <ul>
 <li>
@@ -93,5 +93,5 @@ beginning of some computation.</p>
 </div></div><div class="item-row"><div class="item-left module-item"><a class="type" href="type.RwLockUpgradableGuard.html" title="spin::RwLockUpgradableGuard type">RwLockUpgradableGuard</a></div><div class="item-right docblock-short"><p>A guard that provides immutable data access but can be upgraded to <a href="type.RwLockWriteGuard.html" title="RwLockWriteGuard"><code>RwLockWriteGuard</code></a>. See
 <a href="rwlock/struct.RwLockUpgradableGuard.html" title="rwlock::RwLockUpgradableGuard"><code>rwlock::RwLockUpgradableGuard</code></a> for documentation.</p>
 </div></div><div class="item-row"><div class="item-left module-item"><a class="type" href="type.RwLockWriteGuard.html" title="spin::RwLockWriteGuard type">RwLockWriteGuard</a></div><div class="item-right docblock-short"><p>A guard that provides mutable data access. See <a href="rwlock/struct.RwLockWriteGuard.html" title="rwlock::RwLockWriteGuard"><code>rwlock::RwLockWriteGuard</code></a> for documentation.</p>
-</div></div></div></section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../" data-current-crate="spin" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (0c292c966 2022-02-08)" ></div>
+</div></div></div></section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../" data-current-crate="spin" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (c5c610aad 2022-02-14)" ></div>
 </body></html>

@@ -8,11 +8,11 @@
 <p>This function will take a <strong>mangled</strong> symbol and return a value. When printed,
 the de-mangled version will be written. If the symbol does not look like
 a mangled symbol, the original value will be written instead.</p>
-<h2 id="examples" class="section-header"><a href="#examples">Examples</a></h2>
+<h2 id="examples"><a href="#examples">Examples</a></h2>
 <div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use</span> <span class="ident">rustc_demangle::demangle</span>;
 
 <span class="macro">assert_eq!</span>(<span class="ident">demangle</span>(<span class="string">&quot;_ZN4testE&quot;</span>).<span class="ident">to_string</span>(), <span class="string">&quot;test&quot;</span>);
 <span class="macro">assert_eq!</span>(<span class="ident">demangle</span>(<span class="string">&quot;_ZN3foo3barE&quot;</span>).<span class="ident">to_string</span>(), <span class="string">&quot;foo::bar&quot;</span>);
 <span class="macro">assert_eq!</span>(<span class="ident">demangle</span>(<span class="string">&quot;foo&quot;</span>).<span class="ident">to_string</span>(), <span class="string">&quot;foo&quot;</span>);</code></pre></div>
-</div></details></section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../" data-current-crate="rustc_demangle" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (0c292c966 2022-02-08)" ></div>
+</div></details></section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../" data-current-crate="rustc_demangle" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (c5c610aad 2022-02-14)" ></div>
 </body></html>

@@ -824,9 +824,6 @@
 <span id="819">819</span>
 <span id="820">820</span>
 <span id="821">821</span>
-<span id="822">822</span>
-<span id="823">823</span>
-<span id="824">824</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -1153,17 +1150,6 @@
 
 <span class="kw">impl</span> <span class="ident">KeyboardListener</span> <span class="kw">for</span> <span class="ident">Tty</span> {
     <span class="kw">fn</span> <span class="ident">on_key</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">key</span>: <span class="ident">KeyCode</span>, <span class="ident">released</span>: <span class="ident">bool</span>) {
-        <span class="comment">// requirements bash termios: Termios {</span>
-        <span class="comment">//    c_iflag: 0,</span>
-        <span class="comment">//    c_oflag: NL0 | CR0 | TAB0 | BS0 | VT0 | FF0,</span>
-        <span class="comment">//    c_cflag: CS5,</span>
-        <span class="comment">//    c_lflag: ISIG,</span>
-        <span class="comment">//    c_line: 0,</span>
-        <span class="comment">//    c_cc: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],</span>
-        <span class="comment">//    c_ispeed: 0,</span>
-        <span class="comment">//    c_ospeed: 0</span>
-        <span class="comment">// }</span>
-
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">state</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">lock</span>();
         <span class="kw">let</span> <span class="ident">termios</span> <span class="op">=</span> <span class="ident">TERMIOS</span>.<span class="ident">lock_irq</span>();
 
@@ -1369,11 +1355,19 @@
     <span class="kw">fn</span> <span class="ident">execute</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">byte</span>: <span class="ident">u8</span>) {
         <span class="kw">let</span> <span class="ident">char</span> <span class="op">=</span> <span class="ident">byte</span> <span class="kw">as</span> <span class="ident">char</span>;
 
-        <span class="kw">if</span> <span class="ident">char</span> <span class="op">==</span> <span class="string">&#39;\n&#39;</span> <span class="op">|</span><span class="op">|</span> <span class="ident">char</span> <span class="op">==</span> <span class="string">&#39;\t&#39;</span> {
-            <span class="macro">crate::rendy::print!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">char</span>);
-        } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">char</span> <span class="op">==</span> <span class="string">&#39;\r&#39;</span> {
-            <span class="kw">let</span> (<span class="kw">_</span>, <span class="ident">y</span>) <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::rendy::get_cursor_position</span>();
-            <span class="ident"><span class="kw">crate</span>::rendy::set_cursor_position</span>(<span class="number">0</span>, <span class="ident">y</span>)
+        <span class="kw">match</span> <span class="ident">char</span> {
+            <span class="string">&#39;\n&#39;</span> <span class="op">|</span> <span class="string">&#39;\t&#39;</span> =&gt; <span class="macro">crate::rendy::print!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">char</span>),
+
+            <span class="string">&#39;\r&#39;</span> =&gt; {
+                <span class="kw">let</span> (<span class="kw">_</span>, <span class="ident">y</span>) <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::rendy::get_cursor_position</span>();
+                <span class="ident"><span class="kw">crate</span>::rendy::set_cursor_position</span>(<span class="number">0</span>, <span class="ident">y</span>)
+            }
+
+            <span class="string">&#39;\u{8}&#39;</span> =&gt; {
+                <span class="ident"><span class="kw">crate</span>::rendy::backspace</span>();
+            }
+
+            <span class="kw">_</span> =&gt; {}
         }
     }
 
@@ -1652,5 +1646,5 @@
 
 <span class="macro">crate::module_init!</span>(<span class="ident">init_tty</span>);
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (0c292c966 2022-02-08)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (c5c610aad 2022-02-14)" ></div>
 </body></html>
