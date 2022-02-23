@@ -147,6 +147,22 @@
 <span id="142">142</span>
 <span id="143">143</span>
 <span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
+<span id="147">147</span>
+<span id="148">148</span>
+<span id="149">149</span>
+<span id="150">150</span>
+<span id="151">151</span>
+<span id="152">152</span>
+<span id="153">153</span>
+<span id="154">154</span>
+<span id="155">155</span>
+<span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
+<span id="160">160</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -171,6 +187,8 @@
 
 <span class="kw">use</span> <span class="ident">alloc::sync::Arc</span>;
 
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::apic</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::arch::interrupts</span>::{<span class="self">self</span>, <span class="ident">InterruptStack</span>, <span class="ident">INTERRUPT_CONTROLLER</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils::sync::Mutex</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">fs::cache::DirCacheItem</span>, <span class="ident">syscall::ExecArgs</span>};
 
@@ -286,11 +304,25 @@
     <span class="ident">SCHEDULER</span>.<span class="ident">get</span>().<span class="ident">is_some</span>()
 }
 
-<span class="doccomment">/// Initialize the scheduler.</span>
-<span class="attribute">#[<span class="ident">inline</span>]</span>
+<span class="kw">static</span> <span class="ident">SCHEDULER_VECTOR</span>: <span class="ident">Once</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Once::new</span>();
+<span class="kw">const</span> <span class="ident">SCHEDULER_TIMER_US</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">20000</span>;
+
+<span class="kw">fn</span> <span class="ident">scheduler_irq_handler</span>(<span class="ident">_stack</span>: <span class="kw-2">&amp;mut</span> <span class="ident">InterruptStack</span>) {
+    <span class="ident">apic::get_local_apic</span>().<span class="ident">timer_oneshot</span>(<span class="kw-2">*</span><span class="ident">SCHEDULER_VECTOR</span>.<span class="ident">get</span>().<span class="ident">unwrap</span>(), <span class="ident">SCHEDULER_TIMER_US</span>);
+    <span class="ident">INTERRUPT_CONTROLLER</span>.<span class="ident">eoi</span>();
+    <span class="ident"><span class="self">self</span>::get_scheduler</span>().<span class="ident">inner</span>.<span class="ident">preempt</span>();
+}
+
+<span class="doccomment">/// Initialize the scheduler and set up the scheduler interrupt.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init</span>() {
     <span class="ident">SCHEDULER</span>.<span class="ident">call_once</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">Scheduler::new</span>()).<span class="ident">inner</span>.<span class="ident">init</span>();
+
+    <span class="kw">let</span> <span class="ident">scheduler_vector</span> <span class="op">=</span> <span class="ident">interrupts::allocate_vector</span>();
+    <span class="ident">interrupts::register_handler</span>(<span class="ident">scheduler_vector</span>, <span class="ident">scheduler_irq_handler</span>);
+
+    <span class="ident">apic::get_local_apic</span>().<span class="ident">timer_oneshot</span>(<span class="ident">scheduler_vector</span>, <span class="ident">SCHEDULER_TIMER_US</span>);
+    <span class="ident">SCHEDULER_VECTOR</span>.<span class="ident">call_once</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">scheduler_vector</span>);
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (c5c610aad 2022-02-14)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (68369a041 2022-02-22)" ></div>
 </body></html>

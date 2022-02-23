@@ -273,94 +273,6 @@
 <span id="268">268</span>
 <span id="269">269</span>
 <span id="270">270</span>
-<span id="271">271</span>
-<span id="272">272</span>
-<span id="273">273</span>
-<span id="274">274</span>
-<span id="275">275</span>
-<span id="276">276</span>
-<span id="277">277</span>
-<span id="278">278</span>
-<span id="279">279</span>
-<span id="280">280</span>
-<span id="281">281</span>
-<span id="282">282</span>
-<span id="283">283</span>
-<span id="284">284</span>
-<span id="285">285</span>
-<span id="286">286</span>
-<span id="287">287</span>
-<span id="288">288</span>
-<span id="289">289</span>
-<span id="290">290</span>
-<span id="291">291</span>
-<span id="292">292</span>
-<span id="293">293</span>
-<span id="294">294</span>
-<span id="295">295</span>
-<span id="296">296</span>
-<span id="297">297</span>
-<span id="298">298</span>
-<span id="299">299</span>
-<span id="300">300</span>
-<span id="301">301</span>
-<span id="302">302</span>
-<span id="303">303</span>
-<span id="304">304</span>
-<span id="305">305</span>
-<span id="306">306</span>
-<span id="307">307</span>
-<span id="308">308</span>
-<span id="309">309</span>
-<span id="310">310</span>
-<span id="311">311</span>
-<span id="312">312</span>
-<span id="313">313</span>
-<span id="314">314</span>
-<span id="315">315</span>
-<span id="316">316</span>
-<span id="317">317</span>
-<span id="318">318</span>
-<span id="319">319</span>
-<span id="320">320</span>
-<span id="321">321</span>
-<span id="322">322</span>
-<span id="323">323</span>
-<span id="324">324</span>
-<span id="325">325</span>
-<span id="326">326</span>
-<span id="327">327</span>
-<span id="328">328</span>
-<span id="329">329</span>
-<span id="330">330</span>
-<span id="331">331</span>
-<span id="332">332</span>
-<span id="333">333</span>
-<span id="334">334</span>
-<span id="335">335</span>
-<span id="336">336</span>
-<span id="337">337</span>
-<span id="338">338</span>
-<span id="339">339</span>
-<span id="340">340</span>
-<span id="341">341</span>
-<span id="342">342</span>
-<span id="343">343</span>
-<span id="344">344</span>
-<span id="345">345</span>
-<span id="346">346</span>
-<span id="347">347</span>
-<span id="348">348</span>
-<span id="349">349</span>
-<span id="350">350</span>
-<span id="351">351</span>
-<span id="352">352</span>
-<span id="353">353</span>
-<span id="354">354</span>
-<span id="355">355</span>
-<span id="356">356</span>
-<span id="357">357</span>
-<span id="358">358</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -413,94 +325,6 @@
         <span class="prelude-val">Ok</span>(<span class="ident">string</span>) =&gt; <span class="prelude-val">Some</span>(<span class="ident">string</span>),
         <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="prelude-val">None</span>,
     }
-}
-
-<span class="kw">pub</span> <span class="kw">macro</span> <span class="ident">swapgs_iff_ring3_fast</span>() {
-    <span class="string">&quot;
-    // Check whether the last two bits RSP+8 (code segment) are equal to zero.
-    test QWORD PTR [rsp + 8], 0x3
-    // Skip the SWAPGS instruction if CS &amp; 0b11 == 0b00.
-    jz 1f
-    swapgs
-    1:
-    &quot;</span>
-}
-
-<span class="kw">pub</span> <span class="kw">macro</span> <span class="ident">swapgs_iff_ring3_fast_errorcode</span>() {
-    <span class="string">&quot;
-    test QWORD PTR [rsp + 16], 0x3
-    jz 1f
-    swapgs
-    1:
-    &quot;</span>
-}
-
-<span class="doccomment">/// Push scratch registers.</span>
-<span class="kw">pub</span> <span class="kw">macro</span> <span class="ident">push_scratch</span>() {
-    <span class="string">&quot;
-    /*
-    * Push scratch registers.
-    */
-
-    push rcx
-    push rdx
-    push rdi
-    push rsi
-    push r8
-    push r9
-    push r10
-    push r11
-    &quot;</span>
-}
-
-<span class="doccomment">/// Push preserved registers.</span>
-<span class="kw">pub</span> <span class="kw">macro</span> <span class="ident">push_preserved</span>() {
-    <span class="string">&quot;
-    /*
-    * Push preserved registers.
-    */
-
-    push rbx
-    push rbp
-    push r12
-    push r13
-    push r14
-    push r15
-    &quot;</span>
-}
-
-<span class="kw">pub</span> <span class="kw">macro</span> <span class="ident">pop_preserved</span>() {
-    <span class="string">&quot;
-    /* 
-    * Pop preserved registers.
-    */
-
-    pop r15
-    pop r14
-    pop r13
-    pop r12
-    pop rbp
-    pop rbx
-    &quot;</span>
-}
-
-<span class="doccomment">/// Pop scratch registers.</span>
-<span class="kw">pub</span> <span class="kw">macro</span> <span class="ident">pop_scratch</span>() {
-    <span class="string">&quot;
-    /* 
-    * Pop scratch registers.
-    */
-
-    pop r11
-    pop r10
-    pop r9
-    pop r8
-    pop rsi
-    pop rdi
-    pop rdx
-    pop rcx
-    pop rax
-    &quot;</span>
 }
 
 <span class="kw">pub</span> <span class="kw">macro</span> <span class="ident">intel_asm</span>($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">code</span>:<span class="ident">expr</span>,)<span class="op">+</span>) {
@@ -720,5 +544,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (c5c610aad 2022-02-14)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (68369a041 2022-02-22)" ></div>
 </body></html>

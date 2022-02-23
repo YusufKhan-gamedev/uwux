@@ -557,6 +557,21 @@
 <span id="552">552</span>
 <span id="553">553</span>
 <span id="554">554</span>
+<span id="555">555</span>
+<span id="556">556</span>
+<span id="557">557</span>
+<span id="558">558</span>
+<span id="559">559</span>
+<span id="560">560</span>
+<span id="561">561</span>
+<span id="562">562</span>
+<span id="563">563</span>
+<span id="564">564</span>
+<span id="565">565</span>
+<span id="566">566</span>
+<span id="567">567</span>
+<span id="568">568</span>
+<span id="569">569</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -579,7 +594,8 @@
 <span class="kw">use</span> <span class="ident">core::ptr</span>;
 <span class="kw">use</span> <span class="ident">core::sync::atomic</span>::{<span class="ident">AtomicBool</span>, <span class="ident">AtomicU64</span>, <span class="ident">AtomicUsize</span>, <span class="ident">Ordering</span>};
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::arch::tls</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::arch::interrupts::InterruptStack</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::arch</span>::{<span class="ident">interrupts</span>, <span class="ident">tls</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::mem::paging</span>::{<span class="ident">PhysAddr</span>, <span class="ident">VirtAddr</span>};
 <span class="kw">use</span> <span class="ident">raw_cpuid</span>::{<span class="ident">CpuId</span>, <span class="ident">FeatureInfo</span>};
 <span class="kw">use</span> <span class="ident">spin::Once</span>;
@@ -666,6 +682,11 @@
     }
 }
 
+<span class="kw">fn</span> <span class="ident">lapic_error_handler</span>(<span class="ident">stack</span>: <span class="kw-2">&amp;mut</span> <span class="ident">InterruptStack</span>) {
+    <span class="macro">log::error!</span>(<span class="string">&quot;Local apic error&quot;</span>);
+    <span class="macro">log::error!</span>(<span class="string">&quot;ESR={:#0x}&quot;</span>, <span class="ident"><span class="self">self</span>::get_local_apic</span>().<span class="ident">get_esr</span>());
+}
+
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">LocalApic</span> {
     <span class="ident">address</span>: <span class="ident">VirtAddr</span>,
     <span class="ident">apic_type</span>: <span class="ident">ApicType</span>,
@@ -699,8 +720,11 @@
             <span class="comment">// Enable local APIC; set spurious interrupt vector.</span>
             <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">XAPIC_SVR</span>, <span class="number">0x100</span> <span class="op">|</span> <span class="ident">APIC_SPURIOUS_VECTOR</span>);
 
+            <span class="kw">let</span> <span class="ident">lvt_err_vector</span> <span class="op">=</span> <span class="ident">interrupts::allocate_vector</span>();
+            <span class="ident">interrupts::register_handler</span>(<span class="ident">lvt_err_vector</span>, <span class="ident">lapic_error_handler</span>);
+
             <span class="comment">// Set up LVT (Local Vector Table) error.</span>
-            <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">XAPIC_LVT_ERROR</span>, <span class="number">49</span>);
+            <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">XAPIC_LVT_ERROR</span>, <span class="ident">lvt_err_vector</span> <span class="kw">as</span> <span class="ident">u32</span>);
         }
     }
 
@@ -763,16 +787,28 @@
         <span class="self">self</span>.<span class="ident">apic_type</span>
     }
 
-    <span class="doccomment">/// Stops the local APIC timer.</span>
-    <span class="kw">fn</span> <span class="ident">timer_stop</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
+    <span class="doccomment">/// Stops the APIC timer.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">timer_stop</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
         <span class="kw">unsafe</span> {
             <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">XAPIC_TIMER_INIT_COUNT</span>, <span class="number">0</span>);
             <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">XAPIC_LVT_TIMER</span>, <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">16</span>);
         }
     }
 
-    <span class="doccomment">/// Calibrates the local APIC timer using the programmable</span>
-    <span class="doccomment">/// interval timer.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">timer_oneshot</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">vec</span>: <span class="ident">u8</span>, <span class="ident">us</span>: <span class="ident">usize</span>) {
+        <span class="self">self</span>.<span class="ident">timer_stop</span>();
+
+        <span class="kw">let</span> <span class="ident">lapic_timer_frequency</span> <span class="op">=</span> <span class="ident">tls::get_percpu</span>().<span class="ident">lapic_timer_frequency</span>;
+        <span class="kw">let</span> <span class="ident">ticks</span> <span class="op">=</span> <span class="ident">us</span> <span class="op">*</span> (<span class="ident">lapic_timer_frequency</span> <span class="op">/</span> <span class="number">1000000</span>) <span class="kw">as</span> <span class="ident">usize</span>;
+
+        <span class="kw">unsafe</span> {
+            <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">XAPIC_LVT_TIMER</span>, <span class="ident">vec</span> <span class="kw">as</span> <span class="ident">u32</span>);
+            <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">XAPIC_TIMER_DIV_CONF</span>, <span class="number">0</span>);
+            <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">XAPIC_TIMER_INIT_COUNT</span>, <span class="ident">ticks</span> <span class="kw">as</span> <span class="ident">u32</span>);
+        }
+    }
+
+    <span class="doccomment">/// Calibrates the local APIC timer using the programmable interval timer.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">timer_calibrate</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
         <span class="self">self</span>.<span class="ident">timer_stop</span>();
 
@@ -1049,25 +1085,19 @@
     }
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">io_apic_setup_legacy_irq</span>(<span class="ident">irq</span>: <span class="ident">u8</span>, <span class="ident">status</span>: <span class="ident">i32</span>) {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">io_apic_setup_legacy_irq</span>(<span class="ident">irq</span>: <span class="ident">u8</span>, <span class="ident">vec</span>: <span class="ident">u8</span>, <span class="ident">status</span>: <span class="ident">i32</span>) {
     <span class="comment">// Redirect will handle weather IRQ is masked or not, we just need to</span>
     <span class="comment">// search the MADT ISOs for a corrosponsing IRQ.</span>
     <span class="kw">let</span> <span class="ident">isos_entries</span> <span class="op">=</span> <span class="ident">madt::ISOS</span>.<span class="ident">read</span>();
 
     <span class="kw">for</span> <span class="ident">entry</span> <span class="kw">in</span> <span class="ident">isos_entries</span>.<span class="ident">iter</span>() {
         <span class="kw">if</span> <span class="ident">entry</span>.<span class="ident">irq</span> <span class="op">==</span> <span class="ident">irq</span> {
-            <span class="ident">io_apic_set_redirect</span>(
-                <span class="ident">entry</span>.<span class="ident">irq</span> <span class="op">+</span> <span class="number">0x20</span>,
-                <span class="ident">entry</span>.<span class="ident">global_system_interrupt</span>,
-                <span class="ident">entry</span>.<span class="ident">flags</span>,
-                <span class="ident">status</span>,
-            );
-
+            <span class="ident">io_apic_set_redirect</span>(<span class="ident">vec</span>, <span class="ident">entry</span>.<span class="ident">global_system_interrupt</span>, <span class="ident">entry</span>.<span class="ident">flags</span>, <span class="ident">status</span>);
             <span class="kw">return</span>;
         }
     }
 
-    <span class="ident">io_apic_set_redirect</span>(<span class="ident">irq</span> <span class="op">+</span> <span class="number">0x20</span>, <span class="ident">irq</span> <span class="kw">as</span> <span class="kw">_</span>, <span class="number">0</span>, <span class="ident">status</span>)
+    <span class="ident">io_apic_set_redirect</span>(<span class="ident">vec</span>, <span class="ident">irq</span> <span class="kw">as</span> <span class="ident">u32</span>, <span class="number">0</span>, <span class="ident">status</span>)
 }
 
 <span class="doccomment">/// Initialize the local apic.</span>
@@ -1112,5 +1142,5 @@
     <span class="kw">return</span> <span class="ident">apic_type</span>;
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (c5c610aad 2022-02-14)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (68369a041 2022-02-22)" ></div>
 </body></html>

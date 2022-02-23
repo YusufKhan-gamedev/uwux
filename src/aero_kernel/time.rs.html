@@ -137,13 +137,6 @@
 <span id="132">132</span>
 <span id="133">133</span>
 <span id="134">134</span>
-<span id="135">135</span>
-<span id="136">136</span>
-<span id="137">137</span>
-<span id="138">138</span>
-<span id="139">139</span>
-<span id="140">140</span>
-<span id="141">141</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -175,16 +168,16 @@
 <span class="kw">use</span> <span class="ident">stivale_boot::v2::StivaleEpochTag</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::apic</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::userland::scheduler</span>;
+
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::arch::interrupts</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::arch::interrupts::InterruptStack</span>;
+
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils::io</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils::sync::Mutex</span>;
 
 <span class="kw">const</span> <span class="ident">PIT_FREQUENCY_HZ</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">1000</span>;
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">PIT_DIVIDEND</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">1193182</span>;
 
-<span class="kw">const</span> <span class="ident">SCHED_TIMESLICE_MS</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">15</span>;
-
-<span class="kw">static</span> <span class="ident">SCHED_TICKS</span>: <span class="ident">AtomicUsize</span> <span class="op">=</span> <span class="ident">AtomicUsize::new</span>(<span class="number">0</span>);
 <span class="kw">static</span> <span class="ident">UPTIME_RAW</span>: <span class="ident">AtomicUsize</span> <span class="op">=</span> <span class="ident">AtomicUsize::new</span>(<span class="number">0</span>);
 <span class="kw">static</span> <span class="ident">UPTIME_SEC</span>: <span class="ident">AtomicUsize</span> <span class="op">=</span> <span class="ident">AtomicUsize::new</span>(<span class="number">0</span>);
 
@@ -196,45 +189,6 @@
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_uptime_ticks</span>() -&gt; <span class="ident">usize</span> {
     <span class="ident">UPTIME_SEC</span>.<span class="ident">load</span>(<span class="ident">Ordering::SeqCst</span>)
-}
-
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tick</span>() {
-    {
-        <span class="kw">let</span> <span class="ident">interval</span> <span class="op">=</span> <span class="ident">aero_syscall::TimeSpec</span> {
-            <span class="ident">tv_sec</span>: <span class="number">0</span>,
-            <span class="ident">tv_nsec</span>: (<span class="number">1000000000</span> <span class="op">/</span> <span class="ident">PIT_FREQUENCY_HZ</span>) <span class="kw">as</span> <span class="ident">isize</span>,
-        };
-
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">this</span> <span class="op">=</span> <span class="ident">REALTIME_CLOCK</span>.<span class="ident">lock</span>();
-
-        <span class="kw">if</span> <span class="ident">this</span>.<span class="ident">tv_nsec</span> <span class="op">+</span> <span class="ident">interval</span>.<span class="ident">tv_nsec</span> <span class="op">&gt;</span> <span class="number">999999999</span> {
-            <span class="kw">let</span> <span class="ident">diff</span> <span class="op">=</span> (<span class="ident">this</span>.<span class="ident">tv_nsec</span> <span class="op">+</span> <span class="ident">interval</span>.<span class="ident">tv_nsec</span>) <span class="op">-</span> <span class="number">1000000000</span>;
-
-            <span class="ident">this</span>.<span class="ident">tv_nsec</span> <span class="op">=</span> <span class="ident">diff</span>;
-            <span class="ident">this</span>.<span class="ident">tv_sec</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
-        } <span class="kw">else</span> {
-            <span class="ident">this</span>.<span class="ident">tv_nsec</span> <span class="op">+</span><span class="op">=</span> <span class="ident">interval</span>.<span class="ident">tv_nsec</span>
-        }
-
-        <span class="ident">this</span>.<span class="ident">tv_sec</span> <span class="op">+</span><span class="op">=</span> <span class="ident">interval</span>.<span class="ident">tv_sec</span>;
-    }
-
-    <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">UPTIME_RAW</span>.<span class="ident">fetch_add</span>(<span class="number">1</span>, <span class="ident">Ordering::Relaxed</span>); <span class="comment">// Increment uptime raw ticks.</span>
-
-    <span class="kw">if</span> <span class="ident">value</span> <span class="op">%</span> <span class="ident">PIT_FREQUENCY_HZ</span> <span class="op">==</span> <span class="number">0</span> {
-        <span class="ident">UPTIME_SEC</span>.<span class="ident">fetch_add</span>(<span class="number">1</span>, <span class="ident">Ordering::Relaxed</span>); <span class="comment">// Increment uptime seconds</span>
-    }
-
-    <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">SCHED_TICKS</span>.<span class="ident">fetch_add</span>(<span class="number">1</span>, <span class="ident">Ordering::Relaxed</span>); <span class="comment">// Increment scheduler ticks.</span>
-
-    <span class="comment">// Check if the ticks are equal to the scheduler timeslice. If so, then</span>
-    <span class="comment">// reschedule.</span>
-    <span class="kw">if</span> <span class="ident">value</span> <span class="op">==</span> <span class="ident">SCHED_TIMESLICE_MS</span> {
-        <span class="ident">SCHED_TICKS</span>.<span class="ident">store</span>(<span class="number">0</span>, <span class="ident">Ordering::Relaxed</span>); <span class="comment">// Reset the scheduler ticks counter.</span>
-
-        <span class="ident">scheduler::get_scheduler</span>().<span class="ident">inner</span>.<span class="ident">preempt</span>();
-        <span class="kw">return</span>;
-    }
 }
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_realtime_clock</span>() -&gt; <span class="ident">TimeSpec</span> {
@@ -272,6 +226,34 @@
     <span class="ident">set_reload_value</span>(<span class="ident">new_divisor</span> <span class="kw">as</span> <span class="ident">u16</span>);
 }
 
+<span class="kw">fn</span> <span class="ident">pit_irq_handler</span>(<span class="ident">_stack</span>: <span class="kw-2">&amp;mut</span> <span class="ident">InterruptStack</span>) {
+    {
+        <span class="kw">let</span> <span class="ident">interval</span> <span class="op">=</span> <span class="ident">aero_syscall::TimeSpec</span> {
+            <span class="ident">tv_sec</span>: <span class="number">0</span>,
+            <span class="ident">tv_nsec</span>: (<span class="number">1000000000</span> <span class="op">/</span> <span class="ident">PIT_FREQUENCY_HZ</span>) <span class="kw">as</span> <span class="ident">isize</span>,
+        };
+
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">this</span> <span class="op">=</span> <span class="ident">REALTIME_CLOCK</span>.<span class="ident">lock</span>();
+
+        <span class="kw">if</span> <span class="ident">this</span>.<span class="ident">tv_nsec</span> <span class="op">+</span> <span class="ident">interval</span>.<span class="ident">tv_nsec</span> <span class="op">&gt;</span> <span class="number">999999999</span> {
+            <span class="kw">let</span> <span class="ident">diff</span> <span class="op">=</span> (<span class="ident">this</span>.<span class="ident">tv_nsec</span> <span class="op">+</span> <span class="ident">interval</span>.<span class="ident">tv_nsec</span>) <span class="op">-</span> <span class="number">1000000000</span>;
+
+            <span class="ident">this</span>.<span class="ident">tv_nsec</span> <span class="op">=</span> <span class="ident">diff</span>;
+            <span class="ident">this</span>.<span class="ident">tv_sec</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
+        } <span class="kw">else</span> {
+            <span class="ident">this</span>.<span class="ident">tv_nsec</span> <span class="op">+</span><span class="op">=</span> <span class="ident">interval</span>.<span class="ident">tv_nsec</span>
+        }
+
+        <span class="ident">this</span>.<span class="ident">tv_sec</span> <span class="op">+</span><span class="op">=</span> <span class="ident">interval</span>.<span class="ident">tv_sec</span>;
+    }
+
+    <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">UPTIME_RAW</span>.<span class="ident">fetch_add</span>(<span class="number">1</span>, <span class="ident">Ordering::Relaxed</span>); <span class="comment">// Increment uptime raw ticks.</span>
+
+    <span class="kw">if</span> <span class="ident">value</span> <span class="op">%</span> <span class="ident">PIT_FREQUENCY_HZ</span> <span class="op">==</span> <span class="number">0</span> {
+        <span class="ident">UPTIME_SEC</span>.<span class="ident">fetch_add</span>(<span class="number">1</span>, <span class="ident">Ordering::Relaxed</span>); <span class="comment">// Increment uptime seconds</span>
+    }
+}
+
 <span class="doccomment">/// This function is responsible for initializing the PIT chip and setting</span>
 <span class="doccomment">/// up the IRQ.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init</span>() {
@@ -283,8 +265,12 @@
         .<span class="ident">epoch</span> <span class="kw">as</span> <span class="ident">isize</span>;
 
     <span class="ident">set_frequency</span>(<span class="ident">PIT_FREQUENCY_HZ</span>);
-    <span class="ident">apic::io_apic_setup_legacy_irq</span>(<span class="number">0</span>, <span class="number">1</span>); <span class="comment">// Set up the IRQ.</span>
+
+    <span class="kw">let</span> <span class="ident">pit_vector</span> <span class="op">=</span> <span class="ident">interrupts::allocate_vector</span>();
+    <span class="ident">interrupts::register_handler</span>(<span class="ident">pit_vector</span>, <span class="ident">pit_irq_handler</span>);
+
+    <span class="ident">apic::io_apic_setup_legacy_irq</span>(<span class="number">0</span>, <span class="ident">pit_vector</span>, <span class="number">1</span>); <span class="comment">// Set up the IRQ.</span>
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (c5c610aad 2022-02-14)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (68369a041 2022-02-22)" ></div>
 </body></html>

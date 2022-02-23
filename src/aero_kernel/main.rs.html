@@ -183,9 +183,6 @@
 <span id="178">178</span>
 <span id="179">179</span>
 <span id="180">180</span>
-<span id="181">181</span>
-<span id="182">182</span>
-<span id="183">183</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -299,11 +296,11 @@
     <span class="comment">// NOTE: In this function we only want to initialize essential serivces, including</span>
     <span class="comment">// the task scheduler. Rest of the initializing (including kernel modules) should go</span>
     <span class="comment">// into the kernel main thread function instead.</span>
-    <span class="ident">drivers::mouse::init</span>();
-    <span class="macro">log::info!</span>(<span class="string">&quot;loaded PS/2 driver&quot;</span>);
-
     <span class="ident">fs::init</span>().<span class="ident">unwrap</span>();
     <span class="macro">log::info!</span>(<span class="string">&quot;loaded filesystem&quot;</span>);
+
+    <span class="ident">time::init</span>();
+    <span class="macro">log::info!</span>(<span class="string">&quot;loaded timer&quot;</span>);
 
     <span class="ident">userland::init</span>();
     <span class="macro">log::info!</span>(<span class="string">&quot;loaded userland&quot;</span>);
@@ -320,9 +317,6 @@
     <span class="kw">unsafe</span> {
         <span class="ident">interrupts::enable_interrupts</span>();
     }
-
-    <span class="ident">time::init</span>();
-    <span class="macro">log::info!</span>(<span class="string">&quot;loaded timer&quot;</span>);
 
     <span class="comment">// Pre-scheduler init done. Now we are waiting for the main kernel</span>
     <span class="comment">// thread to be scheduled.</span>
@@ -370,5 +364,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (c5c610aad 2022-02-14)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (68369a041 2022-02-22)" ></div>
 </body></html>
