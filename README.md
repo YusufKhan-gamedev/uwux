@@ -1,6 +1,8 @@
 
 # Uwux
 
+THIS IS A OLD DEPRECATED BRANCH OF UWUX NOT MEANT FOR USE!
+
 **Uwux** is a new modern, experimental, unix-like operating system written in Rust forked from aero. 
 Uwux follows the monolithic kernel design and it is inspired by the Linux Kernel and 
 the Zircon Kernel. Uwux supports "modern" PC features such as Long Mode, 5-level paging, 
