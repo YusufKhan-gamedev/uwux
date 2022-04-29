@@ -19,7 +19,7 @@ No, Uwux runs its own kernel that does *not* originate from Linux and does not s
 
 # Screenshots
 <img src="misc/demo.png">
-<p align="center"><i>Aero OS running in Qemu (the background image is by <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">Rick Astley</a>)</i></p>
+<p align="center"><i>Aero OS(the OS that we forked) running in Qemu (the background image is by <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">Rick Astley</a>)</i></p>
 
 # Features
 - 64-bit higher half kernel
